@@ -15,6 +15,7 @@ import { ToolExecutionError } from "./registry/tool-execution-error";
 import { app } from "electron";
 import { getRunReviewTracker } from "../review/run-review-tracker";
 import { resolveFileAccessPath } from "./file-access";
+import { parseDocument, supportedDocumentKind } from "./document-parse";
 
 const LOG_PREFIX = "[FsTools]";
 
@@ -98,10 +99,37 @@ async function executeReadFile(args: Record<string, unknown>, ctx?: ToolContext)
   let nullCount = 0;
   for (let i = 0; i < head.length; i++) if (head[i] === 0) nullCount++;
   if (nullCount > head.length * 0.05) {
+    // PDF / Word / Excel 是二进制但可解析：先走文档解析链路，失败才报二进制错误。
+    const docKind = supportedDocumentKind(filePath);
+    if (docKind) {
+      const parsed = await parseDocument(filePath, { maxChars: maxLines * 240 });
+      if (parsed.ok) {
+        console.log(LOG_PREFIX, `read_file 解析文档(${parsed.engine}): ${parsed.totalChars} 字符`);
+        return JSON.stringify({
+          path: filePath,
+          parsed: { kind: parsed.kind, engine: parsed.engine, pages: parsed.pages ?? null, totalChars: parsed.totalChars },
+          ...(parsed.degraded ? { note: parsed.degraded } : {}),
+          content: parsed.text,
+          truncated: false,
+        });
+      }
+      if (parsed.degraded) {
+        // 解析链路已明确说明原因（扫描件无文本层等），把这个事实交给模型而不是含糊的"二进制"。
+        console.log(LOG_PREFIX, "read_file 文档解析失败: " + (parsed.error ?? ""));
+        return JSON.stringify({
+          success: false,
+          errorCode: parsed.error === "no_text_layer" ? "NO_TEXT_LAYER" : "PARSE_FAILED",
+          error: parsed.degraded,
+          path: filePath,
+          size: humanBytes(stat.size),
+          retryable: false,
+        });
+      }
+    }
     return JSON.stringify({
       success: false,
       errorCode: "BINARY_FILE",
-      error: "这看起来是二进制文件，Read 只支持文本和图片。如果是图片，请直接用 Read 读取。",
+      error: "这看起来是二进制文件，Read 只支持文本、图片和文档（PDF/Word/Excel）。如果是图片，请直接用 Read 读取。",
       path: filePath,
       size: humanBytes(stat.size),
       retryable: false,
@@ -154,22 +182,22 @@ toolRegistry.register({
   id: "read_file",
   name: "读取文件",
   description:
-    "读取本地文本文件（小说、笔记、代码、配置、日志等）。返回带行号的文本内容。" +
-    "支持最大 10MB 的文本文件；totalLines 是真实总行数，可用 startLine/maxLines 精确翻页。\n" +
-    "文件超过 10MB 会明确报错，改用 search_text 直接获取匹配行的上下文。\n\n" +
+    "读取本地文件（文本、代码、配置、日志，以及 PDF/Word/Excel 文档）。文本文件返回带行号内容；" +
+    "PDF/Word/Excel 自动解析为纯文本返回（PDF 支持扫描件，本机 OCR 服务可用时自动启用）。\n" +
+    "文本文件支持最大 10MB；文档超长时返回截断说明。totalLines 是文本文件的真实总行数，可用 startLine/maxLines 翻页。\n\n" +
     "何时用：\n" +
-    "- 用户消息里出现任何本地文件路径、文件名、扩展名（.txt/.md/.json/.py/.log 等）\n" +
-    "- 用户问'这个文件写了什么''看看 xxx'\n" +
+    "- 用户消息里出现任何本地文件路径、文件名、扩展名（.txt/.md/.json/.py/.log/.pdf/.docx/.xlsx 等）\n" +
+    "- 用户问'这个文件写了什么''看看 xxx''读一下这篇论文'\n" +
     "- 需要拿文件实际内容才能回答的问题\n\n" +
     "不要用于：\n" +
     "- 凭印象猜内容（绝对不行，必须先 read）\n" +
     "- 读图片 → read_image\n" +
     "- 列目录 → list_dir\n\n" +
     "用户本轮附加文件时，会提供绝对路径；读取附件必须先调用本工具。\n" +
-    "参数：path (必填，绝对路径)，startLine (可选，默认 1)，maxLines (可选，默认 500)。",
+    "参数：path (必填，绝对路径)，startLine (可选，文本文件起始行号)，maxLines (可选，默认 500)。",
   enabled: true,
   risk: "fs-read",
-  modes: ["chat", "learn", "code", "work"],
+  modes: ["chat", "research", "legal", "work"],
   chatBuiltin: true,
   requiresFileAttachments: true,
   needsContext: true,
@@ -279,7 +307,7 @@ toolRegistry.register({
   enabled: true,
   needsContext: true,
   risk: "fs-read",
-  modes: ["learn", "code", "work"],
+  modes: ["research", "legal", "work"],
   effectKind: "read" as const,
   // 只读目录枚举；不会改工作区或 Harness 父状态。
   isConcurrencySafe: () => true,
@@ -508,7 +536,7 @@ toolRegistry.register({
   enabled: true,
   needsContext: true,
   risk: "fs-write",
-  modes: ["learn", "code", "work"],
+  modes: ["research", "legal", "work"],
   effectKind: "mutation" as const,
   verificationPolicyResolver: resolveWriteFilePolicy,
   inputSchema: {
@@ -612,7 +640,7 @@ toolRegistry.register({
     "参数：path (必填，绝对路径)。",
   enabled: true,
   risk: "fs-read",
-  modes: ["chat", "learn", "code", "work"],
+  modes: ["chat", "research", "legal", "work"],
   chatBuiltin: true,
   requiresFileAttachments: true,
   effectKind: "read" as const,
