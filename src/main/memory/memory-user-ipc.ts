@@ -390,7 +390,7 @@ export function registerMemoryUserToolIpc(deps: MemoryUserToolIpcDependencies): 
   ipc.handle(IPC.TOOL_SET_MODE_OVERRIDE, (_event, payload: unknown) => {
     const p = payload as { toolId?: string; mode?: string; enabled?: boolean };
     if (!p.toolId || !p.mode) return { ok: false, error: "missing toolId or mode" };
-    const validModes = ["chat", "work", "code", "learn"];
+    const validModes = ["chat", "work", "research", "legal"];
     if (!validModes.includes(p.mode)) return { ok: false, error: "invalid mode" };
     const mode = p.mode as ConversationMode;
     const before = loadGeneralSettings().toolModeOverrides;
@@ -408,7 +408,7 @@ export function registerMemoryUserToolIpc(deps: MemoryUserToolIpcDependencies): 
     const next = { ...before };
     if (p.mode) {
       // 清除单个模式：删除该 mode 键，若工具已无任何覆盖则整个删除
-      const validModes = ["chat", "work", "code", "learn"];
+      const validModes = ["chat", "work", "research", "legal"];
       if (!validModes.includes(p.mode)) return { ok: false, error: "invalid mode" };
       const mode = p.mode as ConversationMode;
       if (next[p.toolId]) {
@@ -461,7 +461,7 @@ export function registerMemoryUserToolIpc(deps: MemoryUserToolIpcDependencies): 
   // 模式过滤和启用状态统一复用注册表规则，渲染端只拿到菜单所需的可序列化字段。
   ipc.handle(IPC.SKILL_GET_SUGGESTIONS, (_event, payload: unknown) => {
     const mode = (payload as { mode?: unknown } | null)?.mode;
-    if (mode !== "work" && mode !== "code" && mode !== "learn") return [];
+    if (mode !== "work" && mode !== "research" && mode !== "legal") return [];
 
     rescanSkills();
     return skillRegistry
@@ -485,7 +485,7 @@ export function registerMemoryUserToolIpc(deps: MemoryUserToolIpcDependencies): 
   ipc.handle(IPC.SKILL_SET_MODE_OVERRIDE, (_event, payload: unknown) => {
     const p = payload as { skillId?: string; mode?: string; enabled?: boolean };
     if (!p.skillId || !p.mode) return { ok: false, error: "missing skillId or mode" };
-    const validModes = ["work", "code", "learn"];
+    const validModes = ["work", "research", "legal"];
     if (!validModes.includes(p.mode)) return { ok: false, error: "invalid mode" };
     const mode = p.mode as SkillMode;
     const before = loadGeneralSettings().skillModeOverrides;
@@ -502,7 +502,7 @@ export function registerMemoryUserToolIpc(deps: MemoryUserToolIpcDependencies): 
     const before = loadGeneralSettings().skillModeOverrides;
     const next = { ...before };
     if (p.mode) {
-      const validModes = ["work", "code", "learn"];
+      const validModes = ["work", "research", "legal"];
       if (!validModes.includes(p.mode)) return { ok: false, error: "invalid mode" };
       const mode = p.mode as SkillMode;
       if (next[p.skillId]) {

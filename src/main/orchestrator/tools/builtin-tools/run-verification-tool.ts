@@ -34,7 +34,7 @@ export const runVerificationTool: ToolDefinition = {
     "参数：verificationType（验证类型：typecheck/test/build/lint），cwd（可选工作目录）。",
   enabled: true,
   risk: "shell",
-  modes: ["code", "work"],
+  modes: ["work"],
   effectKind: "verification" as const,
   ledgerPolicy: "bypass" as const,
   inputSchema: {

@@ -25,8 +25,8 @@ type InstallSource = (typeof INSTALL_SOURCES)[number]["value"];
 const SESSION_MODES = [
   { value: "chat（聊天）", label: "modeChat" },
   { value: "work（工作）", label: "modeWork" },
-  { value: "learn（学习）", label: "modeLearn" },
-  { value: "code（编程）", label: "modeCode" },
+  { value: "research（研究）", label: "modeResearch" },
+  { value: "legal（法律）", label: "modeLegal" },
   { value: "不确定 / 其他入口（渠道、定时任务等）", label: "modeOther" },
 ] as const;
 

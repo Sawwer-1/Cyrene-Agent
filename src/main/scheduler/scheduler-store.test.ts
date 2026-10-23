@@ -61,8 +61,12 @@ describe("scheduler store", () => {
       prompt: "  Summarize my day  ",
       schedule: { kind: "daily", timeOfDay: "09:00" },
       workspaceBinding: { workspaceRoot: "E:/project", displayName: "project", boundAt: 1 },
+<<<<<<< HEAD
       mode,
       enabled: false,
+=======
+      mode: "research",
+>>>>>>> 8edd4122 (feat(会话): 重定义四模式槽位为 chat/research/legal/work)
       toolMode: "allow-list",
       allowedToolIds: ["weather", "weather", "calendar"],
     });
@@ -71,7 +75,11 @@ describe("scheduler store", () => {
     expect(task.prompt).toBe("Summarize my day");
     expect(task.allowedToolIds).toEqual(["weather", "calendar"]);
     expect(task.workspaceBinding).toEqual({ workspaceRoot: "E:/project", displayName: "project", boundAt: 1 });
+<<<<<<< HEAD
     expect(task.mode).toBe(mode);
+=======
+    expect(task.mode).toBe("research");
+>>>>>>> 8edd4122 (feat(会话): 重定义四模式槽位为 chat/research/legal/work)
     expect(task.nextFireAt).toBeTruthy();
 
     const store2 = createSchedulerStore({

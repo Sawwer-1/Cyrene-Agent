@@ -15,7 +15,7 @@ export interface SpeechInputCommitRequest {
   /** 租约冻结的渲染目标标识；页面据此识别过期请求。 */
   rendererTargetId: string;
   sessionId: string;
-  mode: "chat" | "work" | "learn" | "code";
+  mode: "chat" | "work" | "research" | "legal";
   text: string;
 }
 

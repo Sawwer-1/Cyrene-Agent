@@ -8,7 +8,7 @@ import "./TodoPanel.css";
 
 export interface TodoPanelProps {
   state: TodoState | null;
-  mode: "work" | "learn";
+  mode: "work" | "research";
   containerRef?: RefObject<HTMLElement | null>;
 }
 
@@ -17,7 +17,7 @@ const DEFAULT_WIDTH = 240;
 // 只存 i18n key（t() 不能出现在模块顶层常量里），展示文案在组件内求值。
 const MODE_LABEL_KEYS: Record<TodoPanelProps["mode"], string> = {
   work: "todo.modeWork",
-  learn: "todo.modeLearn",
+  research: "todo.modeResearch",
 };
 
 function EmptyCircleIcon() {
@@ -108,7 +108,7 @@ export function TodoPanel({ state, mode, containerRef }: TodoPanelProps) {
         </div>
 
         <div className="cy-todo__hero">
-          <img className="cy-todo__mascot" src={mode === "learn" ? learnTodoPngUrl : workTodoPngUrl} alt={t("todo.mascotAlt")} />
+          <img className="cy-todo__mascot" src={mode === "research" ? learnTodoPngUrl : workTodoPngUrl} alt={t("todo.mascotAlt")} />
           <div className="cy-todo__hero-text">
             <div className="cy-todo__hero-title">{t("todo.currentTasks")}</div>
             <div className="cy-todo__hero-sub">

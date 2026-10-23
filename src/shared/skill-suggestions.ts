@@ -1,5 +1,5 @@
 /** Slash 菜单里可安全通过 IPC 暴露给渲染端的 Skill 信息。 */
-export type SkillSuggestionMode = "work" | "code" | "learn";
+export type SkillSuggestionMode = "work" | "research" | "legal";
 
 export interface SkillSuggestionItem {
   id: string;

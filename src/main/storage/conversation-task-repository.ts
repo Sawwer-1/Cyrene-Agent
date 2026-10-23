@@ -61,7 +61,7 @@ function isTaskSession(value: unknown): value is TaskSession {
     && isTaskType(session.subagentType)
     && (session.companionId === undefined || typeof session.companionId === "string")
     && (session.contextOpen === undefined || typeof session.contextOpen === "boolean")
-    && (session.mode === "work" || session.mode === "code")
+    && (session.mode === "work" || session.mode === "research")
     && isTaskStatus(session.status)
     && Array.isArray(session.messages)
     && Array.isArray(session.trace)

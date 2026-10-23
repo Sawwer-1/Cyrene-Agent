@@ -5,8 +5,7 @@ description: Cyrene 在 Learn 模式下的试卷能力：命题蓝图驱动出�
 version: 1.3.0
 autoInject: true
 effectKind: external_side_effect
-modes:
-  - learn
+modes: [] # v2: learn 槽位退役，考试 Skill 隐藏保留
 ---
 
 # Cyrene Exam Paper（试卷能力）

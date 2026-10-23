@@ -6,7 +6,7 @@ version: 1.1.0
 autoInject: true
 effectKind: external_side_effect
 modes:
-  - learn
+  - research
 ---
 
 # Cyrene Learn Tutor

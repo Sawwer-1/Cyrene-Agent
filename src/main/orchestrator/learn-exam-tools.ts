@@ -120,7 +120,7 @@ function batchTool(
     name: config.name,
     description: config.description,
     enabled: true,
-    modes: ["learn"],
+    modes: [], // v2: learn 槽位退役，考试/测验能力隐藏保留（协议与 IPC 未删）
     needsContext: true,
     effectKind: "mutation",
     verificationPolicy: "none",
@@ -166,7 +166,7 @@ export function createLearnExamTools(store: ExamPaperStore, draftStore: LearnExa
     name: "创建试卷计划",
     description: "在用户确认命题蓝图后创建隐藏试卷草稿。这里只确定题型、题量、分值与考察目标，不写题干、选项或答案；随后按配额调用对应题型工具。",
     enabled: true,
-    modes: ["learn"],
+    modes: [], // v2: learn 槽位退役，考试/测验能力隐藏保留（协议与 IPC 未删）
     needsContext: true,
     effectKind: "mutation",
     verificationPolicy: "none",
@@ -183,7 +183,7 @@ export function createLearnExamTools(store: ExamPaperStore, draftStore: LearnExa
     name: "校验并发布试卷",
     description: "检查每种题型的题量和分值是否达到计划，全部通过后才发布试卷并在右侧打开答题页。失败时按返回的问题继续补题；成功后告知用户页面已打开并结束本轮。",
     enabled: true,
-    modes: ["learn"],
+    modes: [], // v2: learn 槽位退役，考试/测验能力隐藏保留（协议与 IPC 未删）
     needsContext: true,
     effectKind: "mutation",
     verificationPolicy: "none",
@@ -205,7 +205,7 @@ export function createLearnExamTools(store: ExamPaperStore, draftStore: LearnExa
     name: "读取已交卷试卷",
     description: "只在用户已经明确交卷后的新一轮批改中调用。根据 examId 读取完整题目、评分细则、参考答案和已冻结的用户答案；不要在交卷前调用。",
     enabled: true,
-    modes: ["learn"],
+    modes: [], // v2: learn 槽位退役，考试/测验能力隐藏保留（协议与 IPC 未删）
     needsContext: true,
     effectKind: "read",
     verificationPolicy: "none",
@@ -237,7 +237,7 @@ export function createLearnExamTools(store: ExamPaperStore, draftStore: LearnExa
     name: "保存试卷批改结果",
     description: "保存已交卷试卷的总分、逐题反馈和能力分析，供右侧答题页展示。仅能保存当前对话中已交卷的试卷。",
     enabled: true,
-    modes: ["learn"],
+    modes: [], // v2: learn 槽位退役，考试/测验能力隐藏保留（协议与 IPC 未删）
     needsContext: true,
     effectKind: "mutation",
     verificationPolicy: "none",

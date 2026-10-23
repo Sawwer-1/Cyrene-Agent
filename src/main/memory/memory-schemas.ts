@@ -507,7 +507,7 @@ export interface WikiExtractionCandidate {
   scope: "global" | "workspace";
   statementKind: "assertion" | "change" | "correction" | "tentative" | "historical";
   pageType: "self" | "person" | "concept" | "topic" | "project" | "experience";
-  tags: Array<"chat" | "learn" | "work" | "code">;
+  tags: Array<"chat" | "research" | "legal" | "work">;
   aliases: string[];
   validFrom: string;
   validTo: string;

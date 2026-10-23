@@ -49,8 +49,8 @@ export function resolveSoulSamplingForStyle(input: {
 export function buildSystemPrompt(styleFile: string, includeStyle = true): string {
   const mode: ConversationMode = styleFile.startsWith("chat") || styleFile.startsWith("talk")
     ? "chat"
-    : styleFile.startsWith("learn")
-      ? "learn"
+    : styleFile.startsWith("research")
+      ? "research"
       : "work";
   const parts = [buildModePrompt(mode)];
 

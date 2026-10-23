@@ -30,7 +30,7 @@ function createInput() {
     description: "检查取消链路",
     prompt: "检查取消传播并列出证据。",
     subagentType: "general" as const,
-    mode: "code" as const,
+    mode: "work" as const,
     resolvedWorkspaceRoot: "E:\\project",
   };
 }

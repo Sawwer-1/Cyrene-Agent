@@ -94,7 +94,7 @@ function migrateLegacyProjects(current: SidebarOrganizationSnapshot, sessions: C
   const knownRoots = new Set(result.projects.map((project) => normalizeRoot(project.workspaceRoot)));
   const roots = new Map<string, string>();
   for (const session of sessions) {
-    if ((session.mode !== "work" && session.mode !== "code") || !session.workspaceRoot) continue;
+    if (session.mode !== "work" || !session.workspaceRoot) continue;
     const normalized = normalizeRoot(session.workspaceRoot);
     if (!knownRoots.has(normalized)) roots.set(normalized, session.workspaceRoot);
   }
@@ -107,14 +107,14 @@ function migrateLegacyProjects(current: SidebarOrganizationSnapshot, sessions: C
   }
   if (result.topLevelOrder.length === 0 && result.groups.length === 0) {
     result.topLevelOrder = sessions
-      .filter((session) => session.mode === "work" || session.mode === "code")
+      .filter((session) => session.mode === "work")
       .map((session) => ({ type: "session" as const, sessionId: session.id }));
   }
   return result;
 }
 
 function reconcile(current: SidebarOrganizationSnapshot, sessions: ChatSessionMeta[]): SidebarOrganizationSnapshot {
-  const allowed = new Set(sessions.filter((session) => session.mode === "work" || session.mode === "code").map((session) => session.id));
+  const allowed = new Set(sessions.filter((session) => session.mode === "work").map((session) => session.id));
   const result = clone(current);
   const knownProjects = new Set(result.projects.map((project) => project.id));
   const assignedProjects = new Set<string>();
@@ -144,7 +144,7 @@ function reconcile(current: SidebarOrganizationSnapshot, sessions: ChatSessionMe
     return [group.id, members];
   }));
   for (const session of sessions) {
-    if ((session.mode === "work" || session.mode === "code") && !used.has(session.id)) {
+    if ((session.mode === "work") && !used.has(session.id)) {
       result.topLevelOrder.push({ type: "session", sessionId: session.id });
     }
   }
@@ -170,7 +170,7 @@ function isValidDraft(draft: SidebarOrganizationDraft, sessions: ChatSessionMeta
   const roots = new Set<string>();
   const allowedRoots = new Set([
     ...currentProjects.map((project) => normalizeRoot(project.workspaceRoot)),
-    ...sessions.filter((session) => (session.mode === "work" || session.mode === "code") && session.workspaceRoot)
+    ...sessions.filter((session) => (session.mode === "work") && session.workspaceRoot)
       .map((session) => normalizeRoot(session.workspaceRoot!)),
   ]);
   for (const project of draft.projects) {
@@ -203,7 +203,7 @@ function isValidDraft(draft: SidebarOrganizationDraft, sessions: ChatSessionMeta
       || typeof group.color !== "string" || !/^#[0-9a-fA-F]{6}$/.test(group.color) || groupIds.has(group.id)) return false;
     groupIds.add(group.id);
   }
-  const allowed = new Set(sessions.filter((session) => session.mode === "work" || session.mode === "code").map((session) => session.id));
+  const allowed = new Set(sessions.filter((session) => session.mode === "work").map((session) => session.id));
   const used = new Set<string>();
   const orderedGroups = new Set<string>();
   for (const item of draft.topLevelOrder) {

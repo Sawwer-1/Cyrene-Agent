@@ -20,7 +20,7 @@ function optionalPositiveInteger(args: Record<string, unknown>, key: string): nu
 }
 
 function requireCodeWorkspace(ctx: ToolContext | undefined): LspExecutionContext {
-  if (ctx?.mode !== "code") throw new Error("LSP 工具只允许在 Code 模式使用");
+  if (ctx?.mode !== "work") throw new Error("LSP 工具只允许在工作模式使用");
   if (!ctx.resolvedWorkspaceRoot) throw new Error("当前 Code 对话尚未绑定工作目录");
   return { resolvedWorkspaceRoot: ctx.resolvedWorkspaceRoot, signal: ctx.signal };
 }
@@ -53,7 +53,7 @@ export function createLspTool(manager: LspManagerPort): ToolDefinition {
     name: "代码语义查询",
     description: "仅在 Code 模式中，通过用户已安装的语言服务器查询定义、引用、悬停、符号和诊断；不会修改文件或安装软件。",
     enabled: true,
-    modes: ["code"],
+    modes: ["work"],
     risk: "fs-read",
     effectKind: "read",
     verificationPolicy: "none",

@@ -336,7 +336,7 @@ function registerStrReplaceTool(): void {
       "缩进/空白略有出入时会自动做归一化匹配，命中后按文件真实缩进写入。",
     enabled: true,
     risk: "fs-write",
-    modes: ["code", "work", "learn"],
+    modes: ["research", "legal", "work"],
     effectKind: "mutation" as const,
     verificationPolicy: "code" as const,
     inputSchema: {

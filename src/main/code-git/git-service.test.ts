@@ -65,14 +65,14 @@ function service(options: {
   executable?: ResolvedGitExecutable | null;
 }) {
   return createGitService({
-    getSession: () => session(options.mode ?? "code"),
+    getSession: () => session(options.mode ?? "work"),
     resolveExecutable: async () => options.executable === undefined ? executable : options.executable,
     createClient: () => options.client ?? client(),
   });
 }
 
 describe("GitService.getStatusForSession", () => {
-  it.each(["work", "chat", "learn"] as const)("does not expose Git state to a %s session", async (mode) => {
+  it.each(["research", "legal", "chat"] as const)("does not expose Git state to a %s session", async (mode) => {
     const result = await service({ mode }).getStatusForSession("session-1");
 
     expect(result).toMatchObject({
@@ -137,7 +137,7 @@ describe("GitService workspace subscriptions", () => {
     const subscribe = vi.fn(async () => undefined);
     const git = client({ getGitDir: async () => "C:\\worktrees\\repo-meta" });
     const current = createGitService({
-      getSession: () => session("code"),
+      getSession: () => session("work"),
       resolveExecutable: async () => executable,
       createClient: () => git,
       workspaceWatcher: { subscribe, unsubscribe: vi.fn(async () => undefined), dispose: vi.fn(async () => undefined) },
@@ -154,7 +154,7 @@ describe("GitService workspace subscriptions", () => {
 });
 
 describe("GitService.diff", () => {
-  const ctx = { sessionId: "session-1", mode: "code" as const, workspaceRoot: "C:\\repo" };
+  const ctx = { sessionId: "session-1", mode: "work" as const, workspaceRoot: "C:\\repo" };
 
   it("passes through defaults to the client", async () => {
     const getDiff = vi.fn(async (options: { ref?: string; staged?: boolean; maxPatchLines?: number }) => ({
@@ -190,7 +190,7 @@ describe("GitService.diff", () => {
 });
 
 describe("GitService.log", () => {
-  const ctx = { sessionId: "session-1", mode: "code" as const, workspaceRoot: "C:\\repo" };
+  const ctx = { sessionId: "session-1", mode: "work" as const, workspaceRoot: "C:\\repo" };
 
   it("passes through validated options to the client", async () => {
     const getLog = vi.fn(async () => [{ hash: "abc1234", date: "2026-08-16", author: "Cyrene", message: "feat: x" }]);

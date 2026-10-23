@@ -7,7 +7,7 @@ import { reduceTranscriptProjection } from "../orchestrator/conversation-transcr
 import { randomUUID } from "crypto";
 import * as fs from "fs";
 import * as path from "path";
-import { CHAT_SCHEMA_VERSION, type ChatMessage, type ChatSession, type ChatSessionRecord, type ChatSessionRecordV2, type ChatSessionMeta, type ChatSessionPurpose, type ConversationMode, type PendingChatAttachment, type PendingChatMessage, type PendingDispatchState, type PendingDispatchUserSnapshot, type PendingWithdrawalState, } from "../../shared/chat-types";
+import { CHAT_SCHEMA_VERSION, type ChatMessage, type ChatSession, type ChatSessionRecord, type ChatSessionRecordV2, type ChatSessionMeta, type ChatSessionPurpose, type ConversationMode, type LegacyConversationMode, type PendingChatAttachment, type PendingChatMessage, type PendingDispatchState, type PendingDispatchUserSnapshot, type PendingWithdrawalState, migrateLegacyMode, } from "../../shared/chat-types";
 import type { ContextUsageSnapshot } from "../../shared/context-usage";
 import { normalizeBrowserElementSelection } from "../../shared/browser-panel-types";
 import { buildStickerUserModelText, resolveStickerPhrase, type StickerPhraseSource } from "../sticker-descriptions";
@@ -18,14 +18,21 @@ let rootDir = "";
 let sessionsDir = "";
 let indexCache: ChatSessionMeta[] = [];
 let initialized = false;
-function isConversationMode(value: unknown): value is ConversationMode {
-  return value === "chat" || value === "work" || value === "code"
-    || value === "learn";
+/** 旧版枚举值（learn/code/daily）与新枚举（chat/research/legal/work）并存时的归一：
+ *  learn→research、code→work（v2 槽位重定义），其余非法值按用途推断。 */
+function isLegacyConversationMode(value: unknown): value is LegacyConversationMode {
+  return value === "learn" || value === "code";
+}
+function isCurrentConversationMode(value: unknown): value is ConversationMode {
+  return value === "chat" || value === "research" || value === "legal"
+    || value === "work";
 }
 function normalizePersistedMode(value: unknown, purpose: ChatSessionPurpose | undefined): ConversationMode {
   if (value === "daily")
     return "work";
-  return isConversationMode(value) ? value : inferLegacyMode(purpose);
+  if (isCurrentConversationMode(value)) return value;
+  if (isLegacyConversationMode(value)) return migrateLegacyMode(value);
+  return inferLegacyMode(purpose);
 }
 function inferLegacyMode(purpose: ChatSessionPurpose | undefined): ConversationMode {
   return purpose === "proactive-chat" ? "chat" : "work";
@@ -118,7 +125,7 @@ function metaFromSession(session: ChatSession | ChatSessionRecordV2): ChatSessio
     updatedAt: session.updatedAt,
     messageCount: session.schemaVersion === 2 ? session.messageCount : session.messages.length,
     purpose: session.purpose,
-    mode: isConversationMode(session.mode) ? session.mode : inferLegacyMode(session.purpose),
+    mode: normalizePersistedMode(session.mode, session.purpose),
     workspaceRoot: session.workspaceBinding?.workspaceRoot,
     workspaceDisplayName: session.workspaceBinding?.displayName,
     pinned: session.pinned,

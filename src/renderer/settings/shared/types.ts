@@ -293,12 +293,12 @@ export interface SettingsApi {
     name: string;
     description: string;
     enabled: boolean;
-    modes: Array<"chat" | "work" | "code" | "learn"> | null;
+    modes: Array<"chat" | "work" | "research" | "legal"> | null;
     deprecated: string | null;
   }>>;
-  getToolModeOverrides?: () => Promise<Record<string, Partial<Record<"chat" | "work" | "code" | "learn", boolean>>>>;
-  setToolModeOverride?: (toolId: string, mode: "chat" | "work" | "code" | "learn", enabled: boolean) => Promise<{ ok: boolean; error?: string }>;
-  clearToolModeOverride?: (toolId: string, mode?: "chat" | "work" | "code" | "learn") => Promise<{ ok: boolean; error?: string }>;
+  getToolModeOverrides?: () => Promise<Record<string, Partial<Record<"chat" | "work" | "research" | "legal", boolean>>>>;
+  setToolModeOverride?: (toolId: string, mode: "chat" | "work" | "research" | "legal", enabled: boolean) => Promise<{ ok: boolean; error?: string }>;
+  clearToolModeOverride?: (toolId: string, mode?: "chat" | "work" | "research" | "legal") => Promise<{ ok: boolean; error?: string }>;
   // 三模适配层：Skill-模式覆盖层（聊天窗口用）。
   getSkillCatalog?: () => Promise<Array<{
     id: string;

@@ -92,22 +92,13 @@ describe("ChatComposer Code sticker policy", () => {
     onChooseSticker: vi.fn(),
   };
 
-  it("hides the sticker picker in Code mode but keeps it in Work mode", () => {
-    renderToStaticMarkup(createElement(ChatComposer, { ...baseProps, mode: "code" }));
-    const codeHtml = renderToStaticMarkup(senderProps?.prefix as React.ReactElement);
+  it("shows the sticker picker in work mode (v2: 门控随 code 槽位退役)", () => {
     renderToStaticMarkup(createElement(ChatComposer, { ...baseProps, mode: "work" }));
     const workHtml = renderToStaticMarkup(senderProps?.prefix as React.ReactElement);
-
-    expect(codeHtml).not.toContain('aria-label="表情包"');
     expect(workHtml).toContain('aria-label="表情包"');
   });
 
-  it("strips sticker markers without turning them into a Code message sticker", () => {
-    expect(parseComposerMessage("code", "检查一下 [sticker:playful]")).toEqual({
-      rawContent: "检查一下",
-      visibleContent: "检查一下",
-      userSticker: undefined,
-    });
+  it("parses sticker markers in work mode (v2: 剥离特例随 code 槽位退役)", () => {
     expect(parseComposerMessage("work", "检查一下 [sticker:playful]")).toEqual({
       rawContent: "检查一下 [sticker:playful]",
       visibleContent: "检查一下",
@@ -118,7 +109,7 @@ describe("ChatComposer Code sticker policy", () => {
   it("keeps the plan mode toggle in the Code composer footer", () => {
     const html = renderToStaticMarkup(createElement(ChatComposer, {
       ...baseProps,
-      mode: "code",
+      mode: "work",
       conversationId: "session-1",
     }));
 
@@ -144,7 +135,7 @@ describe("ChatComposer workspace switch lock", () => {
   it("会话开启且已绑定工作区后隐藏切换入口：换工作区 = 新开对话", () => {
     const html = renderToStaticMarkup(createElement(ChatComposer, {
       ...baseProps,
-      mode: "code",
+      mode: "work",
       conversationId: "session-1",
       workspaceRoot: "E:/proj",
       workspaceName: "proj",
@@ -156,7 +147,7 @@ describe("ChatComposer workspace switch lock", () => {
   it("开始对话前（无会话）保留工作区选择入口", () => {
     const html = renderToStaticMarkup(createElement(ChatComposer, {
       ...baseProps,
-      mode: "code",
+      mode: "work",
     }));
 
     expect(html).toContain('aria-label="选择工作文件夹"');
@@ -165,7 +156,7 @@ describe("ChatComposer workspace switch lock", () => {
   it("会话存在但未绑定（绑定失败的补救场景）仍显示选择入口", () => {
     const html = renderToStaticMarkup(createElement(ChatComposer, {
       ...baseProps,
-      mode: "code",
+      mode: "work",
       conversationId: "session-1",
     }));
 

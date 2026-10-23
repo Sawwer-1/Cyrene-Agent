@@ -76,24 +76,24 @@ tools: query_expense
 name: code-only
 description: 仅 code 模式
 tools: [query_expense]
-modes: [code]
+modes: [work]
 ---
 正文`;
     const r = parseSkillFrontmatter(md);
     expect(r).not.toBeNull();
-    expect(r!.modes).toEqual(["code"]);
+    expect(r!.modes).toEqual(["work"]);
   });
 
   it("非法 modes 值被忽略", () => {
     const md = `---
 name: x
 description: d
-modes: [invalid, CODE, learn]
+modes: [invalid, WORK, legal]
 ---
 正文`;
     const r = parseSkillFrontmatter(md);
     expect(r).not.toBeNull();
-    expect(r!.modes).toEqual(["code", "learn"]);
+    expect(r!.modes).toEqual(["work", "legal"]);
   });
 });
 

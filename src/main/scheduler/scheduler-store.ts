@@ -85,7 +85,7 @@ function normalizeToolMode(value: unknown): SchedulerToolMode {
 }
 
 function normalizeMode(value: unknown): PluginPromptMode | undefined {
-  return value === "chat" || value === "work" || value === "learn" || value === "code" ? value : undefined;
+  return value === "chat" || value === "work" || value === "research" || value === "legal" ? value : undefined;
 }
 
 function normalizeWorkspaceBinding(value: unknown): ScheduledTask["workspaceBinding"] {
@@ -201,8 +201,8 @@ export function createSchedulerStore(deps: StoreDeps) {
     const workspaceBinding = normalizeWorkspaceBinding(input.workspaceBinding);
     if (!ownerPluginId && !workspaceBinding) throw new Error("用户定时任务必须绑定工作区");
     if (input.mode !== undefined && normalizeMode(input.mode) === undefined) throw new Error("会话模式无效");
-    if (!ownerPluginId && input.mode !== undefined && input.mode !== "work" && input.mode !== "code") {
-      throw new Error("用户定时任务模式仅支持 work 或 code");
+    if (!ownerPluginId && input.mode !== undefined && input.mode !== "work" && input.mode !== "research") {
+      throw new Error("用户定时任务模式仅支持 work 或 research");
     }
     const now = deps.now();
     const next = computeInitialNextFireAt(input.schedule, now);
@@ -233,7 +233,7 @@ export function createSchedulerStore(deps: StoreDeps) {
         mode: normalizeMode(input.mode),
         approvalFingerprint: typeof input.approvalFingerprint === "string" ? input.approvalFingerprint : "",
       } : {}),
-      ...(!ownerPluginId ? { mode: input.mode === "code" ? "code" : "work" } : {}),
+      ...(!ownerPluginId ? { mode: input.mode === "research" ? "research" : "work" } : {}),
     };
     tasks = [...tasks, task];
     persistTasks();
@@ -252,8 +252,8 @@ export function createSchedulerStore(deps: StoreDeps) {
     if (!isPluginTask && patch.enabled === true && !workspaceBinding) {
       throw new Error("启用用户定时任务前必须绑定工作区");
     }
-    if (!isPluginTask && patch.mode !== undefined && patch.mode !== "work" && patch.mode !== "code") {
-      throw new Error("用户定时任务模式仅支持 work 或 code");
+    if (!isPluginTask && patch.mode !== undefined && patch.mode !== "work" && patch.mode !== "research") {
+      throw new Error("用户定时任务模式仅支持 work 或 research");
     }
     const now = deps.now();
     const schedule = patch.schedule ?? current.schedule;

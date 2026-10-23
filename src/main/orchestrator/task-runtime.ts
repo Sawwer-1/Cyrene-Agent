@@ -73,7 +73,7 @@ export interface TaskCloseResult {
 export interface TaskRuntimeParentContext {
   parentConversationId: string;
   parentRunId: string;
-  mode: "work" | "code";
+  mode: "work" | "research";
   systemPrompt: string;
   vendorConfig: VendorConfig;
   tools: ToolDefinition[];

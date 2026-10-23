@@ -8,16 +8,21 @@
  * 返回 null 表示调用方应执行 fallback。
  */
 
-export type ReactSessionMode = "chat" | "work" | "code" | "learn";
+export type ReactSessionMode = "chat" | "work" | "research" | "legal";
 
 export function normalizeSessionMode(mode: string | undefined): ReactSessionMode | null {
   switch (mode) {
     case "chat":
     case "work":
-    case "code":
-    case "learn":
+    case "research":
+    case "legal":
       return mode;
     case "daily":
+      return "work";
+    // v2 槽位重定义：存量会话值迁移（learn→research、code→work）
+    case "learn":
+      return "research";
+    case "code":
       return "work";
     default:
       return null;

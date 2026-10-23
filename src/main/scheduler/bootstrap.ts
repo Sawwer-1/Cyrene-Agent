@@ -53,7 +53,7 @@ export function createSchedulerSubsystem(deps: SchedulerSubsystemDeps): Schedule
       if (!task.workspaceBinding) throw new Error("定时任务缺少绑定工作区");
       const session = (await chatsStore.createSession({
         title: `定时任务：${task.title}`,
-        mode: task.mode === "code" ? "code" : "work",
+        mode: "work",
       }));
       if (!(await chatsStore.setWorkspaceBinding(session.id, task.workspaceBinding))) {
         throw new Error("无法将会话绑定到定时任务工作区");

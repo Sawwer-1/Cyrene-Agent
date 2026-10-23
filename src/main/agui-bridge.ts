@@ -593,7 +593,7 @@ export function registerAgUiIpc(
     const mode = session.mode ?? (session.purpose === "proactive-chat" ? "chat" : "work");
     const runWorkspace = shellWorkspaceIdentity(session.workspaceBinding);
     if (background && sourceWorkspace !== runWorkspace) throw new Error("SHELL_COMPLETION_WORKSPACE_CHANGED");
-    if ((mode === "work" || mode === "code" || mode === "learn") && !session.workspaceBinding?.workspaceRoot) {
+    if ((mode === "work" || mode === "research" || mode === "legal") && !session.workspaceBinding?.workspaceRoot) {
       endConversation();
       // 结束事实已落盘；工作区解绑后等用户显式继续，不能每秒重试唤醒。
       if (background) { inbox.discard(sessionId); return { success: false, runId }; }
@@ -927,8 +927,8 @@ export function registerAgUiIpc(
       send({ type: "CUSTOM", name: "cyrene.choice.dismiss", value: settlement, threadId, runId });
     }, { runId, revision: 1 });
 
-    // Learn 模式：配置 Obsidian Vault 并注册工具
-    if (mode === "learn" && session.workspaceBinding?.workspaceRoot) {
+    // Research 模式：配置 Obsidian 资料库并注册工具
+    if (mode === "research" && session.workspaceBinding?.workspaceRoot) {
       try {
         obsidianWorkspace.configure({
           enabled: true,
@@ -1016,7 +1016,7 @@ export function registerAgUiIpc(
       releaseSessionGuard?.();
       releaseSessionGuard = null;
       // Learn 模式：注销 Obsidian 工具
-      if (mode === "learn") {
+      if (mode === "research") {
         try { unregisterObsidianTools(); } catch { /* ignore */ }
       }
       endConversation();
@@ -1273,7 +1273,7 @@ export function registerAgUiIpc(
               assistantEntryId: options.transcriptSink?.getLastAssistantEntryId?.() ?? input.assistantTurnId ?? runId,
               userTurnId: currentUser?.turnId,
             }));
-            if (mode !== "code" && effects?.sticker !== undefined) {
+            if (mode === "chat" && effects?.sticker !== undefined) {
               send({
                 type: "CUSTOM",
                 name: "cyrene.sticker",
@@ -1291,7 +1291,7 @@ export function registerAgUiIpc(
             );
 
             // Learn 模式：静默更新学习进度（异步，不阻塞，失败不影响主流程）
-            if (mode === "learn" && obsidianWorkspace.isReady()) {
+            if (mode === "research" && obsidianWorkspace.isReady()) {
               const adapter = getAdapterForConfig({
                 provider: options.settings.provider,
                 baseUrl: options.settings.baseUrl,

@@ -27,7 +27,7 @@ import { siGit, siNeteasecloudmusic, type SimpleIcon } from "simple-icons";
 import { useTranslation } from "../../i18n";
 import "./ToolToggleSettingsPanel.css";
 
-type ToolMode = "work" | "code" | "learn" | "chat";
+type ToolMode = "work" | "research" | "legal" | "chat";
 
 type TabKey = ToolMode;
 
@@ -36,7 +36,7 @@ interface ToolCatalogItem {
   name: string;
   description: string;
   enabled: boolean;
-  modes: Array<"chat" | "work" | "code" | "learn"> | null;
+  modes: Array<"chat" | "work" | "research" | "legal"> | null;
   /** chat 模式内置人格工具（如朋友圈三件套）：默认对 chat 可见，不依赖总开关 */
   chatBuiltin?: boolean;
   deprecated: string | null;
@@ -46,8 +46,8 @@ type Overrides = Record<string, Partial<Record<string, boolean>>>;
 
 const BASE_TABS: Array<{ key: TabKey; label: string }> = [
   { key: "work", label: "Work" },
-  { key: "code", label: "Code" },
-  { key: "learn", label: "Learn" },
+  { key: "research", label: "Research" },
+  { key: "legal", label: "Legal" },
 ];
 
 /** Chat 模式首次开启工具增强时预勾选的白名单：音乐全量 + 幂等只读。
@@ -158,11 +158,11 @@ export function ToolToggleSettingsPanel() {
   const [overrides, setOverrides] = useState<Overrides>({});
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
-  const [tab, setTab] = useState<TabKey>("code");
+  const [tab, setTab] = useState<TabKey>("work");
   // Chat 模式工具增强总开关（general-settings.chatToolsEnabled）
   const [chatToolsEnabled, setChatToolsEnabled] = useState(false);
   // 关总开关时若停在 Chat tab，回退到 Code（避免 tab 悬空）。
-  const tabRef = useRef<TabKey>("code");
+  const tabRef = useRef<TabKey>("work");
   tabRef.current = tab;
 
   useEffect(() => {
@@ -218,7 +218,7 @@ export function ToolToggleSettingsPanel() {
       ?.saveGeneral?.(payload)
       ?.catch((err) => console.warn("[ToolToggleSettingsPanel] save general failed:", err));
     if (next) setTab("chat");
-    else if (tabRef.current === "chat") setTab("code");
+    else if (tabRef.current === "chat") setTab("work");
   }, [overrides, tools]);
 
   const TABS = useMemo(

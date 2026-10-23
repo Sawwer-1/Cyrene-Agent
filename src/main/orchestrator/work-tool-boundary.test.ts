@@ -41,7 +41,7 @@ describe("Work tool boundary", () => {
     registerAstGrepTools();
 
     const registered = new Set(toolRegistry.getAllTools().map((tool) => tool.id));
-    const visible = new Set(toolRegistry.getEnabledToolsForMode("code").map((tool) => tool.id));
+    const visible = new Set(toolRegistry.getEnabledToolsForMode("work").map((tool) => tool.id));
 
     for (const id of ["Read", "Write", "Edit", "Glob", "Grep", "ast_grep_search", "ast_grep_replace", "run_shell", "run_verification"]) {
       expect(visible.has(id), `${id} should be available to the model`).toBe(true);

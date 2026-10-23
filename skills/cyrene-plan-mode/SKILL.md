@@ -2,7 +2,8 @@
 name: cyrene-plan-mode
 description: 当 Cyrene 处于 Plan Mode（计划模式），正在讨论、调查、细化或准备代码/文件改动的实施计划时使用。
 modes:
-  - code
+  - work
+  - legal
 ---
 
 # Cyrene Plan Mode（计划模式）

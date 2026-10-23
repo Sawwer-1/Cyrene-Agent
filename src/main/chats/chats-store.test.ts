@@ -309,11 +309,11 @@ describe("chats store database domain", () => {
 
     createSession({ mode: "chat" });
     createSession({ mode: "work" });
-    createSession({ mode: "code" });
-    createSession({ mode: "learn" });
+    createSession({ mode: "research" });
+    createSession({ mode: "legal" });
 
     expect(listSessions().map((session) => session.mode).sort()).toEqual([
-      "chat", "code", "learn", "work",
+      "chat", "legal", "research", "work",
     ]);
   });
 
@@ -323,13 +323,13 @@ describe("chats store database domain", () => {
 
     const chat = createSession({ mode: "chat" });
     const work = createSession({ mode: "work" });
-    const code = createSession({ mode: "code" });
+    const research = createSession({ mode: "research" });
 
-    expect(listSessions({ mode: "code" })).toEqual([
-      expect.objectContaining({ id: code.id, mode: "code" }),
+    expect(listSessions({ mode: "research" })).toEqual([
+      expect.objectContaining({ id: research.id, mode: "research" }),
     ]);
     expect(new Set(listSessions().map((session) => session.id))).toEqual(
-      new Set([chat.id, work.id, code.id]),
+      new Set([chat.id, work.id, research.id]),
     );
   });
 
@@ -402,7 +402,7 @@ describe("chats store database domain", () => {
     expect(listSessions().map(({ id, mode }) => ({ id, mode }))).toEqual(expect.arrayContaining([
       { id: "legacy-work", mode: "work" },
       { id: "legacy-proactive", mode: "chat" },
-      { id: "existing-code", mode: "code" },
+      { id: "existing-code", mode: "work" },
       { id: "daily-project", mode: "work" },
       { id: "invalid-mode", mode: "work" },
       { id: "backfilled-work", mode: "work" },
@@ -439,7 +439,7 @@ describe("chats store database domain", () => {
     });
 
     const persisted = store.getSession(session.id) as unknown as Record<string, unknown>;
-    expect(persisted.mode).toBe("code");
+    expect(persisted.mode).toBe("work");
     expect(persisted.messages).toEqual([{ id: "code-message", role: "user", content: "保留代码会话", at: 1 }]);
     expect(persisted).not.toHaveProperty("codeSession");
   });

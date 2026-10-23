@@ -5,8 +5,8 @@ version: 1.1.0
 effectKind: mutation
 modes:
   - work
-  - code
-  - learn
+  - research
+  - legal
 ---
 
 # Cyrene 右侧浏览器操作

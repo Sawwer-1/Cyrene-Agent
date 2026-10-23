@@ -29,7 +29,7 @@ function tool(id: string): ToolDefinition {
 const parent = {
   parentConversationId: "conversation-1",
   parentRunId: "parent-run-1",
-  mode: "code" as const,
+  mode: "work" as const,
   systemPrompt: "parent persona must not be copied",
   vendorConfig: { provider: "fake", model: "fake" } as never,
   tools: [tool("Read"), tool("task"), tool("ask_user")],
@@ -50,7 +50,7 @@ describe("TaskRuntime", () => {
     const layers = buildChildPromptLayers(parent, "SUBAGENT_PROFILE");
     expect(layers.stablePrefix.startsWith("SUBAGENT_PROFILE\n")).toBe(true);
     expect(layers.sessionPrefix).toContain("E:\\project");
-    expect(layers.sessionPrefix).toContain("会话模式：code");
+    expect(layers.sessionPrefix).toContain("会话模式：work");
   });
 
   it("creates an isolated child Harness run and persists its final result", async () => {
@@ -211,7 +211,7 @@ describe("TaskRuntime", () => {
       description: "已有任务",
       prompt: "先前内容",
       subagentType: "general",
-      mode: "code",
+      mode: "work",
     });
     const execute = createTaskExecutor({ parent, store, runHarness: vi.fn() as never });
 
@@ -232,7 +232,7 @@ describe("TaskRuntime", () => {
       description: "检查取消链路",
       prompt: "检查取消传播。",
       subagentType: "general",
-      mode: "code",
+      mode: "work",
       resolvedWorkspaceRoot: "E:\\project",
     });
     await store.checkpoint(task.id, {
