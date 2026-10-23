@@ -28,7 +28,7 @@ interface MatterResult {
   content: string;
 }
 
-const VALID_SKILL_MODES = new Set<SkillMode>(["work", "code", "learn"]);
+const VALID_SKILL_MODES = new Set<SkillMode>(["work", "research", "legal"]);
 
 function normalizeSkillModes(raw: unknown): SkillMode[] | undefined {
   if (!Array.isArray(raw)) return undefined;

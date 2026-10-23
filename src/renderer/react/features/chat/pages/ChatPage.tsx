@@ -441,8 +441,10 @@ export function ChatPage({ onOpenSettings, scheduledTasksNavigation = 0 }: { onO
   const draft = drafts[scopeKey] ?? "";
   const messages = activeSessionId ? (messagesBySession[activeSessionId] ?? []) : [];
   const activeInteraction = sessionInteraction(interactionsBySession, activeSessionId);
+  // v2: learn 槽位退役，考试子系统隐藏保留（工具 modes 已置空；协议与 IPC 未删）。
+  const LEARN_EXAM_ENABLED = false;
   useEffect(() => {
-    if (!activeSessionId || mode !== "learn") return;
+    if (!activeSessionId || !LEARN_EXAM_ENABLED || mode !== "research") return;
     const api = learnExamApi();
     if (!api) return;
     const onCreated = (event: { conversationId: string; examId: string }) => {
@@ -773,7 +775,7 @@ export function ChatPage({ onOpenSettings, scheduledTasksNavigation = 0 }: { onO
           conversationId: sessionId,
           messageId,
           text: segment,
-          speechMode: targetMode === "learn" ? "learn" : "default",
+          speechMode: targetMode === "research" ? "learn" : "default",
           preferredAddress,
           automatic: true,
         });
@@ -924,8 +926,8 @@ export function ChatPage({ onOpenSettings, scheduledTasksNavigation = 0 }: { onO
         store.list(),
         store.getSidebarOrganization(),
       ]);
-      const workAndCode = listed.filter((session) => session.mode === "work" || session.mode === "code");
-      setSidebarSessions((current) => sessionMetaListEqual(current, workAndCode) ? current : workAndCode);
+      const workSessions = listed.filter((session) => session.mode === "work");
+      setSidebarSessions((current) => sessionMetaListEqual(current, workSessions) ? current : workSessions);
       setSidebarOrganization(organization);
     } catch (error) {
       console.error("[ChatPage] Failed to refresh sidebar organization:", error);
@@ -1052,7 +1054,7 @@ export function ChatPage({ onOpenSettings, scheduledTasksNavigation = 0 }: { onO
           void (async () => {
             try {
               // 先修复本轮未完成的批改状态，再消费下一条队列，避免把下一轮的 grading 状态误判为本轮失败。
-              if (mode === "learn") {
+              if (mode === "research" && LEARN_EXAM_ENABLED) {
                 const api = learnExamApi();
                 if (api) {
                   const exams = await api.listByConversation(sessionId).catch(() => []);
@@ -1216,7 +1218,7 @@ export function ChatPage({ onOpenSettings, scheduledTasksNavigation = 0 }: { onO
       identityId: null,
       mode: targetMode,
       title:
-        targetMode === "work" || targetMode === "code" || hasPendingWorkspace
+        targetMode === "work" || hasPendingWorkspace
           ? t("chatPage.newTaskTitle")
           : t("chatPage.newChatTitle"),
     });
@@ -1327,7 +1329,7 @@ export function ChatPage({ onOpenSettings, scheduledTasksNavigation = 0 }: { onO
         return;
       }
       // Learn 模式：空目录询问是否初始化通用学习结构
-      if (targetMode === "learn" && result.isEmpty) {
+      if (targetMode === "research" && result.isEmpty) {
         const confirmed = await feedback.confirm({
           title: t("chatPage.learnStructureConfirmTitle"),
           message: t("chatPage.emptyDirLearnStructureConfirm"),
@@ -1481,7 +1483,7 @@ export function ChatPage({ onOpenSettings, scheduledTasksNavigation = 0 }: { onO
           targetMode,
           pendingWorkspace.displayName ?? t("chatPage.defaultWorkspaceName"),
         ));
-        if (targetMode === "learn" && workspaceResult.isEmpty) {
+        if (targetMode === "research" && workspaceResult.isEmpty) {
           const confirmed = await feedback.confirm({
             title: t("chatPage.learnStructureConfirmTitle"),
             message: t("chatPage.emptyDirLearnStructureConfirm"),
@@ -1589,9 +1591,10 @@ export function ChatPage({ onOpenSettings, scheduledTasksNavigation = 0 }: { onO
   }
 
   async function queueLearnExamGrading(conversationId: string, examId: string) {
+    if (!LEARN_EXAM_ENABLED) return { ok: false as const, error: { code: "E_EXAM_DISABLED", message: "考试子系统已停用" } };
     const result = await submitTextToSession({
       sessionId: conversationId,
-      mode: "learn",
+      mode: "research",
       text: `请批改我刚刚提交的试卷（试卷编号：${examId}）。先调用 learn_exam_get_submission 获取冻结的试卷与作答，再按试卷中的评分标准逐题批改，最后调用 learn_exam_save_grading 保存评分结果。`,
     });
     if (!result.ok) console.warn("[LearnExam] 批改请求入队失败:", result.error.message);
@@ -1684,7 +1687,7 @@ export function ChatPage({ onOpenSettings, scheduledTasksNavigation = 0 }: { onO
   // 消息级快照兜底兼容旧数据；无快照不渲染。
   const latestContextUsage = (activeSessionId ? sessionContextUsageBySession[activeSessionId] : undefined)
     ?? messages.findLast((message) => message.contextUsage)?.contextUsage;
-  const activePlan = mode === "code" && activeSessionId ? planReviewBySession[activeSessionId] : null;
+  const activePlan = mode === "work" && activeSessionId ? planReviewBySession[activeSessionId] : null;
 
   // ── 右侧面板标签管理 ──
   // 会话隔离：切换会话时清空工作区相关标签，避免把 A 会话的文件带进 B 会话
@@ -2006,17 +2009,17 @@ export function ChatPage({ onOpenSettings, scheduledTasksNavigation = 0 }: { onO
           />
         ) : (
         <>
-        {(mode === "work" || mode === "learn") && (
+        {(mode === "work" || mode === "research") && (
           <TodoPanel
             state={activeSessionId ? todoStateBySession[activeSessionId] : null}
             mode={mode}
             containerRef={workspaceRef}
           />
         )}
-        {mode === "code" && activeSessionId && (
+        {mode === "work" && activeSessionId && (
           <CodeGitPanel
             sessionId={activeSessionId}
-            projectName={workspaceNames.code}
+            projectName={workspaceNames.work}
             todoState={todoStateBySession[activeSessionId] ?? null}
             containerRef={workspaceRef}
             planPhase={planReviewBySession[activeSessionId]?.phase}

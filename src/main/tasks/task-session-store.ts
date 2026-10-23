@@ -15,7 +15,7 @@ export interface CreateTaskSessionInput {
   prompt: string;
   subagentType: TaskSubagentType;
   companionId?: string;
-  mode: "work" | "code";
+  mode: "work" | "research";
   resolvedWorkspaceRoot?: string;
 }
 

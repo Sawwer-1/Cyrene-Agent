@@ -32,7 +32,7 @@ async function makeRuntime(permissionMode: "prompt" | "allow_all") {
   return prepareToolRuntime({
     options: {
       conversationId: "thread-1",
-      conversationMode: "code",
+      conversationMode: "work",
       settings: { provider: "test", baseUrl: "", model: "model", apiKey: "" },
       messages: [{ role: "user", content: "做个计划" }],
       requestUserClarification: vi.fn(async () => ({ answers: [] })),

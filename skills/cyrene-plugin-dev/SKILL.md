@@ -4,7 +4,6 @@ description: 当用户想为 Cyrene 开发插件（扩展昔涟的工具、做�
 version: 1.3.0
 effectKind: mutation
 modes:
-  - code
   - work
 ---
 

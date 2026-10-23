@@ -6,7 +6,7 @@ version: 1.0.0
 autoInject: true
 effectKind: mutation
 modes:
-  - learn
+  - research
 ---
 
 # Cyrene Obsidian Workspace

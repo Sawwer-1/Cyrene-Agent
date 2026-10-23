@@ -65,7 +65,7 @@ export async function preparePlanRunContext(input: {
   planState: ReturnType<typeof getPlanState> | undefined;
   planContextBlock?: string;
 }> {
-  const participatesInPlanMode = input.mode === "code" || input.mode === "chat";
+  const participatesInPlanMode = input.mode === "work" || input.mode === "chat";
   if (participatesInPlanMode && getPlanState(input.threadId) === "PLAN_REVIEW") {
     // PLAN_REVIEW 收到新消息意味着用户继续讨论；先退回讨论态，再拍摄本次 run 的状态快照。
     supplementPlan(input.threadId);
@@ -111,7 +111,8 @@ export function completePlanRun(input: {
   signal: AbortSignal;
   send: (event: BaseEvent) => void;
 }): void {
-  if (input.mode !== "code" && input.mode !== "chat") return;
+  // v2 槽位：work（合并原 code）与 legal 参与计划状态机
+  if (input.mode !== "work" && input.mode !== "legal") return;
 
   const finishedPlanPath = completeExecution(input.threadId);
   if (!finishedPlanPath) return;

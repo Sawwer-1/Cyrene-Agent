@@ -43,7 +43,7 @@ export async function prepareToolRuntime(input: {
     // 判断依据从 risk（危险程度）换成 effectKind（是否改变世界），只放行纯读取工具；
     // 未注册工具也拒绝（fail-closed：MCP/插件工具必须显式声明 effectKind 才能参与计划阶段）。
     if (
-      (options.conversationMode === "code" || options.conversationMode === "chat")
+      (options.conversationMode === "work" || options.conversationMode === "chat")
       && isPlanReadOnly(threadId)
     ) {
       const planTool = toolRegistry.getById(toolId);
@@ -83,8 +83,8 @@ export async function prepareToolRuntime(input: {
   };
   const toolOutputStore = new FileToolOutputStore(app.getPath("userData"));
   // 只有 work/code 模式允许派生任务；chat 模式不创建 TaskSession，避免出现不可见的后台执行。
-  // taskMode 在收窄的同时保留 "work" | "code" 字面量类型，供下方 executor 的 parent.mode 使用。
-  const taskMode = options.conversationMode === "work" || options.conversationMode === "code"
+  // taskMode 在收窄的同时保留 "work" | "research" 字面量类型，供下方 executor 的 parent.mode 使用。
+  const taskMode = options.conversationMode === "work" || options.conversationMode === "research"
     ? options.conversationMode
     : undefined;
   const taskStore = taskMode ? getTaskSessionStore(app.getPath("userData")) : undefined;

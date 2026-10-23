@@ -500,7 +500,7 @@ export function registerApplyPatchTool(): void {
       "参数：patch（完整的补丁文本）。",
     enabled: true,
     risk: "fs-write",
-    modes: ["code", "work"],
+    modes: ["work"],
     effectKind: "mutation" as const,
     verificationPolicy: "code" as const,
     inputSchema: {

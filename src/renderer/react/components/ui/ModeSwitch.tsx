@@ -1,5 +1,5 @@
 import { SegmentedControl } from "@mantine/core";
-import { BookOpen, FolderCode, MessageCircle, Monitor } from "lucide-react";
+import { BookOpen, Landmark, MessageCircle, Monitor } from "lucide-react";
 
 interface ModeSwitchProps {
   value: string;
@@ -13,11 +13,12 @@ const iconProps = {
   focusable: false as const,
 };
 
+// v2 槽位重定义：聊天 / 研究 / 法律 / 工作（原 Learn→Research，Code 并入 Work）
 const modes = [
   { value: "work", label: <><Monitor {...iconProps} /><span>Work</span></> },
   { value: "chat", label: <><MessageCircle {...iconProps} /><span>Chat</span></> },
-  { value: "code", label: <><FolderCode {...iconProps} /><span>Code</span></> },
-  { value: "learn", label: <><BookOpen {...iconProps} /><span>Learn</span></> },
+  { value: "research", label: <><BookOpen {...iconProps} /><span>Research</span></> },
+  { value: "legal", label: <><Landmark {...iconProps} /><span>Legal</span></> },
 ];
 
 export function ModeSwitch({ value, onChange }: ModeSwitchProps) {

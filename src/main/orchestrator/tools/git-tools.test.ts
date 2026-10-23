@@ -8,7 +8,7 @@ function codeContext(workspaceRoot = "C:\\trusted"): ToolContext {
     userQuery: "提交当前修改",
     conversationId: "session-1",
     resolvedWorkspaceRoot: workspaceRoot,
-    mode: "code",
+    mode: "work",
   };
 }
 
@@ -33,12 +33,12 @@ function service(): GitService {
 }
 
 describe("createCodeGitTools", () => {
-  it("rejects Git mutation outside Code mode", async () => {
+  it("rejects Git mutation outside work mode (v2: git 并入 work)", async () => {
     const tools = createCodeGitTools(service());
     const init = tools.find((tool) => tool.id === "git_init");
 
-    await expect(init?.execute({}, { ...codeContext(), mode: "work" })).rejects
-      .toThrow("Git 工具只允许在 Code 模式使用");
+    await expect(init?.execute({}, { ...codeContext(), mode: "research" })).rejects
+      .toThrow("Git 工具只允许在工作模式使用");
   });
 
   it("uses the runtime workspace instead of any model-provided root", async () => {
@@ -53,7 +53,7 @@ describe("createCodeGitTools", () => {
     }, codeContext());
 
     expect(gitService.commit).toHaveBeenCalledWith(
-      { sessionId: "session-1", mode: "code", workspaceRoot: "C:\\trusted" },
+      { sessionId: "session-1", mode: "work", workspaceRoot: "C:\\trusted" },
       "feat: add review",
       ["src/a.ts"],
     );

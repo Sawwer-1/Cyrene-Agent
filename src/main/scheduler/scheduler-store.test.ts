@@ -60,7 +60,7 @@ describe("scheduler store", () => {
       prompt: "  Summarize my day  ",
       schedule: { kind: "daily", timeOfDay: "09:00" },
       workspaceBinding: { workspaceRoot: "E:/project", displayName: "project", boundAt: 1 },
-      mode: "code",
+      mode: "research",
       toolMode: "allow-list",
       allowedToolIds: ["weather", "weather", "calendar"],
     });
@@ -69,7 +69,7 @@ describe("scheduler store", () => {
     expect(task.prompt).toBe("Summarize my day");
     expect(task.allowedToolIds).toEqual(["weather", "calendar"]);
     expect(task.workspaceBinding).toEqual({ workspaceRoot: "E:/project", displayName: "project", boundAt: 1 });
-    expect(task.mode).toBe("code");
+    expect(task.mode).toBe("research");
     expect(task.nextFireAt).toBeTruthy();
 
     const store2 = createSchedulerStore({

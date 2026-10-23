@@ -14,13 +14,13 @@ function tool(id: string): ToolDefinition {
 }
 
 describe("filterToolsForConversationMode", () => {
-  it.each(["work", "chat", "learn"] as const)("hides Git tools from %s", (mode) => {
+  it.each(["research", "legal", "chat"] as const)("hides Git tools from %s", (mode) => {
     expect(filterToolsForConversationMode(mode, [tool("read_file"), tool("git_commit")]).map((item) => item.id))
       .toEqual(["read_file"]);
   });
 
   it("keeps Git tools available to Code", () => {
-    expect(filterToolsForConversationMode("code", [tool("read_file"), tool("git_commit")]).map((item) => item.id))
+    expect(filterToolsForConversationMode("work", [tool("read_file"), tool("git_commit")]).map((item) => item.id))
       .toEqual(["read_file", "git_commit"]);
   });
 });

@@ -47,7 +47,7 @@ type SidebarNameDialog = {
 } | null;
 
 function ProjectIcon({ mode }: { mode: ConversationMode }) {
-  if (mode === "code") {
+  if (mode === "work") {
     return (
       <svg viewBox="0 0 48 48" aria-hidden="true">
         <path d="M43 23V14C43 12.8954 42.1046 12 41 12H24L19 6H7C5.89543 6 5 6.89543 5 8V40C5 41.1046 5.89543 42 7 42H22" />
@@ -418,7 +418,7 @@ export const ConversationSidebar = memo(function ConversationSidebar({
   const { t } = useTranslation();
   // 统一反馈入口：删除会话走危险确认
   const feedback = useFeedback();
-  const supportsProjects = mode === "work" || mode === "code";
+  const supportsProjects = mode === "work";
   const projects = useMemo(() => {
     const result = new Map<string, ProjectSummary>();
     for (const session of sessions) {

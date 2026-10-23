@@ -103,7 +103,7 @@ const WELCOME_GREETING_BOUNDARY_HOURS = [5, 9, 12, 14, 18, 23] as const;
 const SKILL_SUGGESTION_STATUS_VALUE = "__cyrene_skill_suggestion_status__";
 
 function isSkillSuggestionMode(mode: string): mode is SkillSuggestionMode {
-  return mode === "work" || mode === "code" || mode === "learn";
+  return mode === "work" || mode === "research" || mode === "legal";
 }
 
 function slashSkillTokenKey(mode: string, value: string, token: ActiveSlashSkillToken): string {
@@ -169,9 +169,6 @@ export function parseComposerMessage(mode: string, content: string): {
   const trimmed = content.trim();
   const stickerMatch = trimmed.match(/\[sticker:([^\]]+)\]/i);
   const visibleContent = trimmed.replace(/\[sticker:[^\]]+\]/gi, "").trim();
-  if (mode === "code") {
-    return { rawContent: visibleContent, visibleContent, userSticker: undefined };
-  }
   return {
     rawContent: trimmed,
     visibleContent,
@@ -349,14 +346,14 @@ export function ChatComposer({
   const [welcomeGreetingDate, setWelcomeGreetingDate] = useState(() => new Date());
   const [enabledStickers, setEnabledStickers] = useState<EnabledSticker[]>([]);
   const supportsWorkFiles = ["work", "code"].includes(mode);
-  const supportsObsidianLibrary = mode === "learn";
+  const supportsObsidianLibrary = mode === "research";
   // 会话开启且已绑定工作区即锁定：工作区按钮只作为"开始对话前"的选择入口，
   // 保留给未绑定会话仅作补救（换工作区 = 新开对话，避免运行中换绑与旧引用失效）
   const workspaceSelectable = !conversationId || !workspaceRoot;
   const supportsPermission = supportsWorkFiles || supportsObsidianLibrary;
-  const supportsPlanToggle = mode === "code";
-  const supportsStyle = mode === "chat" || mode === "learn";
-  const supportsStickers = mode !== "code";
+  const supportsPlanToggle = mode === "work" || mode === "legal";
+  const supportsStyle = mode === "chat" || mode === "research";
+  const supportsStickers = true;
   const welcomeImageUrl = WELCOME_IMAGE_BY_MODE[mode] ?? chatWelcomeUrl;
   const welcomeGreeting = t(getWelcomeGreetingKey(welcomeGreetingDate), { name: preferredAddress });
   const requiresWorkspace = supportsWorkFiles;

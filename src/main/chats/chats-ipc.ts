@@ -692,7 +692,7 @@ export async function registerChatsIpc(
         );
         return { ok: false, error: "session not found" };
       }
-      if (existing.mode !== "work" && existing.mode !== "code" && existing.mode !== "learn") {
+      if (existing.mode !== "work" && existing.mode !== "research" && existing.mode !== "legal") {
         console.warn(
           "[Workspace] 绑定失败：模式不支持 workspace sessionId=" + String(payload.sessionId).slice(0, 8) + "...",
           "mode=" + String(existing.mode),
@@ -726,7 +726,7 @@ export async function registerChatsIpc(
           } catch { /* ignore */ }
         }
         // Learn 模式：检测目录是否为空，让 renderer 决定是否初始化结构
-        const empty = existing.mode === "learn" ? await isEmptyDirectory(resolved) : false;
+        const empty = existing.mode === "research" ? await isEmptyDirectory(resolved) : false;
         return { ok: true, binding, isEmpty: empty };
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
@@ -743,8 +743,8 @@ export async function registerChatsIpc(
       if (!binding) return { ok: false, error: "no workspace binding" };
       // 同 CHATS_SET_WORKSPACE：用 v1/v2 双兼容读取，v2 会话不得误判
       const session = (await chatsStore.getSessionRecord(sessionId));
-      if (!session || session.mode !== "learn") {
-        return { ok: false, error: "session is not in learn mode" };
+      if (!session || session.mode !== "research") {
+        return { ok: false, error: "session is not in research mode" };
       }
       const result = await ensureVaultStructure(binding.workspaceRoot);
       if (result.error) return { ok: false, error: result.error };

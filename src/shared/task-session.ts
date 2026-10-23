@@ -65,7 +65,7 @@ export interface TaskSession {
   /** 当前上下文绑定的黄金裔；关闭后保留旧记录但不再恢复该上下文。 */
   companionId?: string;
   contextOpen?: boolean;
-  mode: "work" | "code";
+  mode: "work" | "research";
   resolvedWorkspaceRoot?: string;
   status: TaskSessionStatus;
   messages: TaskTranscriptMessage[];

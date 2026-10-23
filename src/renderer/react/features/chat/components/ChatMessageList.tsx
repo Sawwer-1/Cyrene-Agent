@@ -227,7 +227,7 @@ export function AssistantMessageFooter({ content, messageId, streaming, at, conv
           conversationId={conversationId}
           messageId={messageId}
           text={cleanText}
-          speechMode={mode === "learn" ? "learn" : "default"}
+          speechMode={mode === "research" ? "learn" : "default"}
           preferredAddress={preferredAddress}
           onCacheKey={(cacheKey, converterVersion) => onTtsCacheKey?.(messageId, cacheKey, converterVersion)}
         />

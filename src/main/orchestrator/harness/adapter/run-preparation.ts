@@ -31,7 +31,7 @@ export function filterToolsForConversationMode(
   tools: ToolDefinition[],
 ): ToolDefinition[] {
   // 这是代码模式工具过滤的唯一事实来源；只返回新数组，不修改 registry 或传入数组。
-  if (mode === "code") return tools;
+  if (mode === "work") return tools;
   return tools.filter((tool) => !CODE_ONLY_GIT_TOOL_IDS.has(tool.id));
 }
 

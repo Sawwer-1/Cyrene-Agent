@@ -7,7 +7,7 @@ import type {
   WikiSourceRef, WikiTag,
 } from "./wiki-types";
 
-const TAGS = new Set<WikiTag>(["chat", "learn", "work", "code"]);
+const TAGS = new Set<WikiTag>(["chat", "research", "legal", "work"]);
 const TYPES = new Set<WikiPageType>(["self", "person", "concept", "topic", "project", "experience"]);
 const STATUSES = new Set(["current", "historical", "uncertain", "revoked"]);
 const MAX_QUOTE_CHARS = 240;

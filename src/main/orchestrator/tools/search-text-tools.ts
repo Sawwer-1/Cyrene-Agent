@@ -396,7 +396,7 @@ export function registerSearchTextTool(): void {
       "maxMatches（可选，最多返回数），contextLines（可选，上下文行数），caseSensitive（可选，区分大小写）。",
     enabled: true,
     risk: "fs-read",
-    modes: ["code", "work"],
+    modes: ["work"],
     effectKind: "read" as const,
     isConcurrencySafe: () => true,
     verificationPolicy: "none" as const,

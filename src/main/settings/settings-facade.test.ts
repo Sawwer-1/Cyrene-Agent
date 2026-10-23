@@ -148,7 +148,7 @@ describe("tool switch persistence round trip (chatToolsEnabled + toolModeOverrid
 
     // 逐工具开关（TOOL_SET_MODE_OVERRIDE handler → saveGeneral 合并写入）
     reloaded.saveGeneralSettings({
-      toolModeOverrides: { ...afterRestart.toolModeOverrides, run_shell: { code: false } },
+      toolModeOverrides: { ...afterRestart.toolModeOverrides, run_shell: { research: false } },
     });
 
     const third = await importFresh();
@@ -156,7 +156,7 @@ describe("tool switch persistence round trip (chatToolsEnabled + toolModeOverrid
     expect(finalSettings.toolModeOverrides).toEqual({
       music_search: { chat: true },
       weather: { chat: true },
-      run_shell: { code: false },
+      run_shell: { research: false },
     });
     expect(finalSettings.chatToolsEnabled).toBe(true);
   });

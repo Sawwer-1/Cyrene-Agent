@@ -1,5 +1,5 @@
 /** The four conversation capabilities are overlapping views of one user-level wiki. */
-export type WikiTag = "chat" | "learn" | "work" | "code";
+export type WikiTag = "chat" | "research" | "legal" | "work";
 
 export type WikiScope =
   | { kind: "global" }

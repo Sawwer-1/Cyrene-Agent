@@ -1,7 +1,7 @@
 /** Long-term wiki facts are scoped by identity, never by the display title of a workspace. */
 export type WikiScope = { kind: "global" } | { kind: "workspace"; workspaceId: string };
 export type WikiVisibility = { workspaceIds?: string[] };
-export type WikiTag = "chat" | "learn" | "work" | "code";
+export type WikiTag = "chat" | "research" | "legal" | "work";
 export type WikiPageType = "self" | "person" | "concept" | "topic" | "project" | "experience";
 export type WikiClaimStatus = "current" | "historical" | "uncertain" | "revoked";
 export type WikiStatementKind = "assertion" | "change" | "correction" | "tentative" | "historical";

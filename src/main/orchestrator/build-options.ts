@@ -830,7 +830,7 @@ export async function buildAgentRunOptions(
   }
 
   const styleId = resolveRunStyleId(input, styleSettings);
-  const isTaskMode = resolvedMode === "work" || resolvedMode === "code";
+  const isTaskMode = resolvedMode === "work" || resolvedMode === "legal";
   // work/code 完全不受 style 影响：不注入风格 prompt，采样走厂商默认。
   // chat/learn 下 native/default 也走厂商默认采样（不自己设 0.65）；
   // 只有显式选了带预设采样的具体 style 才用预设采样。
@@ -849,7 +849,7 @@ export async function buildAgentRunOptions(
   // 工具列表在 run 组装时就收敛到 read-only 策略允许的风险级。
   // code 与 chat（开启工具走 harness）参与计划状态机；work 会话恒为 NORMAL 不触发过滤。
   const conversationIdForPlan = conversationId;
-  const planReadOnly = (resolvedMode === "code" || resolvedMode === "chat")
+  const planReadOnly = (resolvedMode === "work" || resolvedMode === "legal")
     && isPlanReadOnly(conversationIdForPlan);
   const enabledTools = planReadOnly
     ? (modeEnabledTools as readonly ToolDefinition[]).filter(
@@ -874,7 +874,7 @@ export async function buildAgentRunOptions(
   // PLAN_DISCUSSING / PLAN_REVIEW 时注入。不拼进 stablePrefix（autoInjectedSkillContext
   // 会进 toolSystemContent → stablePrefix，进/出 plan mode 会打断缓存），改为单独字段
   // planSkillContext 传给 harness，在 runtimeParts（可变部分）拼，保证缓存前缀稳定。
-  const planStateForInject = resolvedMode === "code" || resolvedMode === "chat"
+  const planStateForInject = resolvedMode === "work" || resolvedMode === "legal"
     ? getPlanState(conversationIdForPlan)
     : "NORMAL";
   let planSkillContext: string | undefined;

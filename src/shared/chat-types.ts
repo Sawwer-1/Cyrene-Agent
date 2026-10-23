@@ -19,8 +19,19 @@ export type ChatRole = "user" | "model";
 
 export type ChatSessionPurpose = "proactive-chat";
 
-/** 会话模式：创建时绑定，整个会话生命周期不变 */
-export type ConversationMode = "chat" | "work" | "code" | "learn";
+/** 会话模式：创建时绑定，整个会话生命周期不变。
+ *  v2 槽位重定义（原 chat/work/code/learn）：learn→research、code 并入 work、新增 legal。
+ *  存量值必须经 migrateLegacyMode 归一后再使用，新代码禁止直接写 "learn"/"code"。 */
+export type ConversationMode = "chat" | "research" | "legal" | "work";
+
+/** 旧版模式值，只应出现在存量数据迁移路径里。 */
+export type LegacyConversationMode = "learn" | "code";
+
+export function migrateLegacyMode(mode: string): ConversationMode {
+  if (mode === "learn") return "research";
+  if (mode === "code") return "work";
+  return mode as ConversationMode;
+}
 
 export type ChatStickerId =
   | "playful"

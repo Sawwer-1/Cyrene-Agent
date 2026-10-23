@@ -113,7 +113,7 @@ export interface GitService {
 
 export interface TrustedGitContext {
   sessionId: string;
-  mode: "code";
+  mode: "work";
   workspaceRoot: string;
 }
 
@@ -133,7 +133,7 @@ export function createGitService(deps: GitServiceDeps): GitService {
   async function resolveCodeSession(sessionId: string): Promise<ResolvedCodeSession | CodeGitStatus> {
     const session = (await deps.getSession(sessionId));
     if (!session) return emptyCodeGitStatus(sessionId, "error", "找不到当前对话");
-    if (session.mode !== "code") {
+    if (session.mode !== "work") {
       return emptyCodeGitStatus(sessionId, "error", "Git 工作台只在 Code 模式可用");
     }
     const workspaceRoot = session.workspaceBinding?.workspaceRoot;
@@ -156,7 +156,7 @@ export function createGitService(deps: GitServiceDeps): GitService {
   async function trustedContextForSession(sessionId: string): Promise<TrustedGitContext> {
     const resolved = await resolveCodeSession(sessionId);
     if (isCodeGitStatus(resolved)) throw new Error(resolved.message ?? "Git 状态暂时不可用");
-    return { sessionId, mode: "code", workspaceRoot: resolved.workspaceRoot };
+    return { sessionId, mode: "work", workspaceRoot: resolved.workspaceRoot };
   }
 
   function emitChanged(sessionId: string): void {

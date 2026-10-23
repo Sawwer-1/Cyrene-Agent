@@ -73,10 +73,10 @@ describe("chats IPC mode filtering", () => {
 
     await create(event, { mode: "chat" });
     await create(event, { mode: "work" });
-    const code = await create(event, { mode: "code" }) as { id: string };
+    const code = await create(event, { mode: "research" }) as { id: string };
 
-    expect(await list(event, { mode: "code" })).toEqual([
-      expect.objectContaining({ id: code.id, mode: "code" }),
+    expect(await list(event, { mode: "research" })).toEqual([
+      expect.objectContaining({ id: code.id, mode: "research" }),
     ]);
   });
 
@@ -454,7 +454,7 @@ describe("chats IPC mode filtering", () => {
     if (!create || !enqueue || !claim) throw new Error("title generation IPC handlers were not registered");
     const event = { sender: {} };
 
-    for (const mode of ["chat", "work", "code", "learn"] as const) {
+    for (const mode of ["chat", "work", "research", "legal"] as const) {
       const created = await create(event, { mode }) as { id: string };
       await enqueue(event, {
         sessionId: created.id,
@@ -472,8 +472,8 @@ describe("chats IPC mode filtering", () => {
     expect(scheduled).toEqual([
       expect.objectContaining({ userMessageId: "first-chat", text: "处理chat问题" }),
       expect.objectContaining({ userMessageId: "first-work", text: "处理work问题" }),
-      expect.objectContaining({ userMessageId: "first-code", text: "处理code问题" }),
-      expect.objectContaining({ userMessageId: "first-learn", text: "处理learn问题" }),
+      expect.objectContaining({ userMessageId: "first-research", text: "处理research问题" }),
+      expect.objectContaining({ userMessageId: "first-legal", text: "处理legal问题" }),
     ]);
   });
 
@@ -617,7 +617,7 @@ describe("chats IPC mode filtering", () => {
     }
 
     const event = { sender: {} };
-    const session = await create(event, { mode: "code" }) as { id: string };
+    const session = await create(event, { mode: "work" }) as { id: string };
     // 场景：最近项目下拉选了历史路径，但该目录已被移动/删除/外接盘断开
     const goneRoot = path.join(
       os.tmpdir(),
@@ -645,7 +645,7 @@ describe("chats IPC mode filtering", () => {
 
     const event = { sender: {} };
     const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "cyrene-ws-v2-"));
-    const session = await create(event, { mode: "code" }) as { id: string };
+    const session = await create(event, { mode: "work" }) as { id: string };
 
     // 复现真实时序：ensureSession → selectSession 先用 store.get（组合读取）把
     // 刚创建的 v1 会话迁移成 v2 落盘，随后 sendMessage 的 setWorkspace 才到达。
@@ -938,7 +938,7 @@ describe("chats IPC mode filtering", () => {
       prompt: "迁移前的提示",
       subagentType: "general",
       companionId: "风堇",
-      mode: "code",
+      mode: "work",
     });
 
     // 无 transcript 条目 → 回退旧 messages 快照（create 时种下的 prompt）

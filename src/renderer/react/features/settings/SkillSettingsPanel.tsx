@@ -48,7 +48,7 @@ import { siGit, siObsidian, type SimpleIcon } from "simple-icons";
 import { useTranslation } from "../../i18n";
 import "./SkillSettingsPanel.css";
 
-type SkillMode = "work" | "code" | "learn";
+type SkillMode = "work" | "research" | "legal";
 type TabKey = SkillMode;
 type SkillSource = "builtin" | "user";
 
@@ -67,8 +67,8 @@ type Overrides = Record<string, Partial<Record<SkillMode, boolean>>>;
 
 const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "work", label: "Work" },
-  { key: "code", label: "Code" },
-  { key: "learn", label: "Learn" },
+  { key: "research", label: "Research" },
+  { key: "legal", label: "Legal" },
 ];
 
 const SOURCE_OPTIONS: Array<{ key: "all" | SkillSource; labelKey: string }> = [
@@ -202,7 +202,7 @@ export function SkillSettingsPanel() {
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState("");
   const [source, setSource] = useState<"all" | SkillSource>("all");
-  const [tab, setTab] = useState<TabKey>("code");
+  const [tab, setTab] = useState<TabKey>("work");
 
   const load = useCallback(async () => {
     const api = window.settings;

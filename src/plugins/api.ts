@@ -99,7 +99,7 @@ export interface PluginToolContext {
   runId?: string;
   signal?: AbortSignal;
   resolvedWorkspaceRoot?: string;
-  mode?: "chat" | "learn" | "code" | "work";
+  mode?: "chat" | "research" | "legal" | "work";
   permissionMode?: "normal" | "allow_all";
   metadata?: Record<string, unknown>;
 }
@@ -113,7 +113,7 @@ export interface PluginTool {
   capability?: string;
   enabled: boolean;
   risk?: "safe" | "fs-read" | "fs-write" | "shell" | "network" | "input-control";
-  modes?: Array<"learn" | "code" | "work">;
+  modes?: Array<"research" | "legal" | "work">;
   inputSchema: {
     type: "object";
     properties: Record<string, PluginJsonSchema>;
@@ -562,7 +562,7 @@ export interface PluginDeps {
 
 export type PluginCleanup = () => void | Promise<void>;
 
-export type PluginPromptMode = "chat" | "work" | "learn" | "code";
+export type PluginPromptMode = "chat" | "research" | "legal" | "work";
 
 /**
  * 提示词 Provider 的场景来源。新增场景默认不收录既有 Provider，

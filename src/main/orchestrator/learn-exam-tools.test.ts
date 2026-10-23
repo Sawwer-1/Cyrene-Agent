@@ -13,7 +13,7 @@ vi.mock("../learn/exam-paper-ipc", () => ({
   publishLearnExamChanged: events.changed,
 }));
 
-const context = { userQuery: "出一份测试卷", conversationId: "conversation-a", runId: "run-a", mode: "learn" as const };
+const context = { userQuery: "出一份测试卷", conversationId: "conversation-a", runId: "run-a", mode: "research" as const };
 
 describe("staged Learn exam tools", () => {
   let root: string;
@@ -37,7 +37,8 @@ describe("staged Learn exam tools", () => {
 
   it("exposes the plan, five type-specific writers and publish tool only in Learn mode", () => {
     expect(Object.keys(tools)).toEqual(["createPlan", "addSingleChoice", "addMultipleChoice", "addTrueFalse", "addFillBlank", "addWritten", "publish", "getSubmission", "saveGrading"]);
-    for (const tool of Object.values(tools)) expect(tool.modes).toEqual(["learn"]);
+    // v2: learn 槽位退役，考试工具全模式隐藏（能力保留、协议未删）
+    for (const tool of Object.values(tools)) expect(tool.modes).toEqual([]);
     expect("create" in tools).toBe(false);
   });
 

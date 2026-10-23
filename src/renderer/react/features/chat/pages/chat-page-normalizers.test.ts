@@ -135,7 +135,7 @@ describe("getInitialMode", () => {
     try {
       // ChatPage 的写入方与 getInitialMode 的读取方必须共用同一个键
       localStorage.setItem(LAST_MODE_STORAGE_KEY, "learn");
-      expect(getInitialMode()).toBe("learn");
+      expect(getInitialMode()).toBe("research");
       // 无记录或非法值时回退默认 chat 模式
       storage.clear();
       expect(getInitialMode()).toBe("chat");

@@ -4,7 +4,7 @@
 import type { ToolEffectKind } from "../orchestrator/tools/registry/tool-registry";
 
 /** Skill 可用的会话模式。chat 模式不暴露 skill。 */
-export type SkillMode = "work" | "code" | "learn";
+export type SkillMode = "work" | "research" | "legal";
 
 /** 一个 skill 的完整内存表示。 */
 export interface SkillEntry {
@@ -22,7 +22,7 @@ export interface SkillEntry {
   /** Skill 声明的工作流效果类型；加载指令本身只读，实际操作由各工具检查权限。 */
   effectKind?: ToolEffectKind;
   /** Skill 默认可用的会话模式白名单。未设置 = 全模式通用（向后兼容）。
-   *  仅 work/code/learn 参与过滤；可被 SkillModeOverrides 覆盖。 */
+   *  仅 work/research/legal 参与过滤；可被 SkillModeOverrides 覆盖。 */
   modes?: SkillMode[];
   /** 不在 UI 设置面板展示（如角色语气校准等系统级 skill）。 */
   hiddenFromUi?: boolean;

@@ -16,7 +16,7 @@ describe("Code LSP tool", () => {
 
     expect(tool).toMatchObject({
       id: "lsp",
-      modes: ["code"],
+      modes: ["work"],
       risk: "fs-read",
       effectKind: "read",
       verificationPolicy: "none",
@@ -29,7 +29,7 @@ describe("Code LSP tool", () => {
       line: 2,
       character: 5,
     }, {
-      mode: "code",
+      mode: "work",
       userQuery: "查询 value 的类型",
       resolvedWorkspaceRoot: "E:\\project",
     });
@@ -45,12 +45,12 @@ describe("Code LSP tool", () => {
     }, { resolvedWorkspaceRoot: "E:\\project" });
   });
 
-  it("rejects non-Code contexts and model-supplied server commands", async () => {
+  it("rejects non-work contexts and model-supplied server commands", async () => {
     const tool = createLspTool({ execute: vi.fn() });
 
-    await expect(tool.execute({ operation: "workspaceSymbol", query: "LspClient" }, { mode: "work", userQuery: "查询", resolvedWorkspaceRoot: "E:\\project" }))
-      .rejects.toThrow("Code 模式");
-    await expect(tool.execute({ operation: "hover", command: "powershell.exe" }, { mode: "code", userQuery: "查询", resolvedWorkspaceRoot: "E:\\project" }))
+    await expect(tool.execute({ operation: "workspaceSymbol", query: "LspClient" }, { mode: "research", userQuery: "查询", resolvedWorkspaceRoot: "E:\\project" }))
+      .rejects.toThrow("工作模式");
+    await expect(tool.execute({ operation: "hover", command: "powershell.exe" }, { mode: "research", userQuery: "查询", resolvedWorkspaceRoot: "E:\\project" }))
       .rejects.toThrow("不支持的 LSP 参数");
   });
 
@@ -59,7 +59,7 @@ describe("Code LSP tool", () => {
     const tool = createLspTool(manager);
     const item = { name: "value", uri: "file:///project/src/app.ts", range: {}, selectionRange: {} };
 
-    await tool.execute({ operation: "incomingCalls", filePath: "src/app.ts", item }, { mode: "code", userQuery: "谁调用它", resolvedWorkspaceRoot: "E:\\project" });
+    await tool.execute({ operation: "incomingCalls", filePath: "src/app.ts", item }, { mode: "work", userQuery: "谁调用它", resolvedWorkspaceRoot: "E:\\project" });
 
     expect(manager.execute).toHaveBeenCalledWith(expect.objectContaining({ operation: "incomingCalls", item }), expect.any(Object));
   });

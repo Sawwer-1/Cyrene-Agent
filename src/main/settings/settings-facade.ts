@@ -389,7 +389,7 @@ function normalizeToolModeOverrides(
     if (!modeMap || typeof modeMap !== "object") continue;
     const filtered: Partial<Record<ConversationMode, boolean>> = {};
     for (const [mode, value] of Object.entries(modeMap as Record<string, unknown>)) {
-      if (mode !== "chat" && mode !== "work" && mode !== "code" && mode !== "learn") continue;
+      if (mode !== "chat" && mode !== "work" && mode !== "research" && mode !== "legal") continue;
       if (typeof value === "boolean") {
         filtered[mode as ConversationMode] = value;
       }
@@ -401,7 +401,7 @@ function normalizeToolModeOverrides(
   return result;
 }
 
-const SKILL_MODES = new Set(["work", "code", "learn"] as const);
+const SKILL_MODES = new Set(["work", "research", "legal"] as const);
 
 /** 规范化 Skill-模式覆盖层：仅保留合法的 { skillId: { work|code|learn: boolean } } 结构。
  *  非法值被丢弃，空对象兜底。 */
@@ -413,11 +413,11 @@ function normalizeSkillModeOverrides(
   const raw = input as Record<string, unknown>;
   for (const [skillId, modeMap] of Object.entries(raw)) {
     if (!modeMap || typeof modeMap !== "object") continue;
-    const filtered: Partial<Record<"work" | "code" | "learn", boolean>> = {};
+    const filtered: Partial<Record<"work" | "research" | "legal", boolean>> = {};
     for (const [mode, value] of Object.entries(modeMap as Record<string, unknown>)) {
-      if (!SKILL_MODES.has(mode as "work" | "code" | "learn")) continue;
+      if (!SKILL_MODES.has(mode as "work" | "research" | "legal")) continue;
       if (typeof value === "boolean") {
-        filtered[mode as "work" | "code" | "learn"] = value;
+        filtered[mode as "work" | "research" | "legal"] = value;
       }
     }
     if (Object.keys(filtered).length > 0) {

@@ -51,7 +51,7 @@ describe("harness plan lifecycle", () => {
   it("returns the plan state after moving PLAN_REVIEW back to discussion", async () => {
     getPlanState.mockReturnValueOnce("PLAN_REVIEW").mockReturnValueOnce("PLAN_DISCUSSING");
 
-    const prepared = await preparePlanRunContext({ mode: "code", threadId: "thread-1" });
+    const prepared = await preparePlanRunContext({ mode: "work", threadId: "thread-1" });
 
     expect(supplementPlan).toHaveBeenCalledWith("thread-1");
     expect(prepared.planState).toBe("PLAN_DISCUSSING");
@@ -65,7 +65,7 @@ describe("harness plan lifecycle", () => {
     const sent: unknown[] = [];
 
     completePlanRun({
-      mode: "code",
+      mode: "work",
       threadId: "thread-1",
       runId: "run-1",
       runStatus: "completed",
@@ -91,7 +91,7 @@ describe("harness plan lifecycle", () => {
       getPlanRecoveredFrom.mockReturnValue("PLAN_REVIEW");
       readFile.mockResolvedValue("# 旧计划\n- [ ] 第一步");
 
-      const prepared = await preparePlanRunContext({ mode: "code", threadId: "thread-1" });
+      const prepared = await preparePlanRunContext({ mode: "work", threadId: "thread-1" });
 
       expect(prepared.planState).toBe("PLAN_DISCUSSING");
       expect(prepared.planContextBlock).toContain("[PLAN_RECOVERY]");
@@ -105,7 +105,7 @@ describe("harness plan lifecycle", () => {
       getPlanRecoveredFrom.mockReturnValue("EXECUTING");
       readFile.mockResolvedValue("# 旧计划\n- [ ] 已执行到一半的步骤");
 
-      const prepared = await preparePlanRunContext({ mode: "code", threadId: "thread-1" });
+      const prepared = await preparePlanRunContext({ mode: "work", threadId: "thread-1" });
 
       expect(prepared.planContextBlock).toContain("[PLAN_RECOVERY]");
       expect(prepared.planContextBlock).toContain("不要假设计划尚未执行");
@@ -116,7 +116,7 @@ describe("harness plan lifecycle", () => {
     it("无恢复标记的普通 DISCUSSING：不注入任何块", async () => {
       getPlanRecoveredFrom.mockReturnValue(undefined);
 
-      const prepared = await preparePlanRunContext({ mode: "code", threadId: "thread-1" });
+      const prepared = await preparePlanRunContext({ mode: "work", threadId: "thread-1" });
 
       expect(prepared.planContextBlock).toBeUndefined();
       expect(readFile).not.toHaveBeenCalled();
@@ -126,7 +126,7 @@ describe("harness plan lifecycle", () => {
       // 模拟 marker 已在首条消息消费：getPlanRecoveredFrom 返回 undefined
       getPlanRecoveredFrom.mockReturnValue(undefined);
 
-      const prepared = await preparePlanRunContext({ mode: "code", threadId: "thread-1" });
+      const prepared = await preparePlanRunContext({ mode: "work", threadId: "thread-1" });
 
       expect(prepared.planContextBlock).toBeUndefined();
     });
@@ -135,7 +135,7 @@ describe("harness plan lifecycle", () => {
       getPlanRecoveredFrom.mockReturnValue("EXECUTING");
       readFile.mockRejectedValue(new Error("ENOENT: no such file"));
 
-      const prepared = await preparePlanRunContext({ mode: "code", threadId: "thread-1" });
+      const prepared = await preparePlanRunContext({ mode: "work", threadId: "thread-1" });
 
       expect(prepared.planContextBlock).toContain("[PLAN_RECOVERY]");
       expect(prepared.planContextBlock).toContain("不要假设计划尚未执行");

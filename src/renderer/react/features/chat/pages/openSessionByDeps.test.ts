@@ -69,13 +69,16 @@ describe("normalizeSessionMode", () => {
   it("合法 mode 各自归一化", () => {
     expect(normalizeSessionMode("chat")).toBe("chat");
     expect(normalizeSessionMode("work")).toBe("work");
-    expect(normalizeSessionMode("code")).toBe("code");
+    expect(normalizeSessionMode("research")).toBe("research");
+    expect(normalizeSessionMode("legal")).toBe("legal");
     expect(normalizeSessionMode("daily")).toBe("work");
   });
 
-  it("'learn' 返回 'learn'", () => {
-    expect(normalizeSessionMode("learn")).toBe("learn");
+  it("存量值迁移：learn→research、code→work", () => {
+    expect(normalizeSessionMode("learn")).toBe("research");
+    expect(normalizeSessionMode("code")).toBe("work");
   });
+
 
   it("undefined / 未知 / 空串都返回 null", () => {
     expect(normalizeSessionMode(undefined)).toBeNull();
@@ -85,15 +88,15 @@ describe("normalizeSessionMode", () => {
 });
 
 describe("openSessionByIdWithDeps", () => {
-  it("code 会话：selectSession(id, 'code') 被调用，返回 true", async () => {
+  it("存量 code 会话：迁移为 work 打开", async () => {
     const selectSession = vi.fn(async () => {});
     const result = await openSessionByIdWithDeps({
       sessionId: "code-1",
-      getSession: async () => ({ mode: "code" }),
+      getSession: async () => ({ mode: "code" as string }),
       selectSession,
     });
     expect(result).toBe(true);
-    expect(selectSession).toHaveBeenCalledWith("code-1", "code");
+    expect(selectSession).toHaveBeenCalledWith("code-1", "work");
   });
 
   it("work 会话：selectSession(id, 'work') 被调用", async () => {
@@ -117,7 +120,7 @@ describe("openSessionByIdWithDeps", () => {
     expect(selectSession).toHaveBeenCalledWith("daily-1", "work");
   });
 
-  it("learn 会话：selectSession(id, 'learn') 被调用，返回 true", async () => {
+  it("存量 learn 会话：迁移为 research 打开", async () => {
     const selectSession = vi.fn(async () => {});
     const result = await openSessionByIdWithDeps({
       sessionId: "learn-1",
@@ -125,7 +128,7 @@ describe("openSessionByIdWithDeps", () => {
       selectSession,
     });
     expect(result).toBe(true);
-    expect(selectSession).toHaveBeenCalledWith("learn-1", "learn");
+    expect(selectSession).toHaveBeenCalledWith("learn-1", "research");
   });
 
   it("unknown / missing mode：selectSession 不被调用，返回 false", async () => {

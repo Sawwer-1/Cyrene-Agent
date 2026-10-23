@@ -716,7 +716,7 @@ contextBridge.exposeInMainWorld("live2dDiagnostics", live2dDiagnosticsApi);
 
 // 聊天会话存储（多对话历史）
 const chatStoreApi = {
-  list: (options?: { mode?: "chat" | "work" | "code" | "learn" }) => ipcRenderer.invoke(IPC.CHATS_LIST, options),
+  list: (options?: { mode?: "chat" | "work" | "research" | "legal" }) => ipcRenderer.invoke(IPC.CHATS_LIST, options),
   getSidebarOrganization: () => ipcRenderer.invoke(IPC.CHATS_SIDEBAR_ORGANIZATION_GET) as Promise<SidebarOrganizationSnapshot>,
   applySidebarOrganization: (expectedRevision: number, draft: SidebarOrganizationDraft) =>
     ipcRenderer.invoke(IPC.CHATS_SIDEBAR_ORGANIZATION_APPLY, { expectedRevision, draft }) as Promise<SidebarOrganizationResult>,
@@ -730,7 +730,7 @@ const chatStoreApi = {
     ipcRenderer.invoke(IPC.TASK_SESSION_GET, { taskId, parentConversationId }),
   getPage: (id: string, before: number | null, limit: number) =>
     ipcRenderer.invoke(IPC.CHATS_GET_PAGE, { id, before, limit }),
-  create: (payload?: { title?: string; identityId?: string | null; mode?: "chat" | "work" | "code" | "learn" }) =>
+  create: (payload?: { title?: string; identityId?: string | null; mode?: "chat" | "work" | "research" | "legal" }) =>
     ipcRenderer.invoke(IPC.CHATS_CREATE, payload ?? {}),
   checkpointPresentation: (sessionId: string, messageId: string, mutationKey: string, patch: unknown) =>
     ipcRenderer.invoke(IPC.CTA_PRESENTATION_CHECKPOINT, { sessionId, messageId, mutationKey, patch }),
