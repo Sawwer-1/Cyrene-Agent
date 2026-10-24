@@ -45,7 +45,7 @@ describe("scheduler store", () => {
     })).toThrow("模式仅支持");
   });
 
-  it.each(["work", "code"] as const)("persists and reloads a normalized %s task", (mode) => {
+  it.each(["work", "research"] as const)("persists and reloads a normalized %s task", (mode) => {
     const dir = tmpDir();
     onTestFinished(() => fs.rmSync(dir, { recursive: true, force: true }));
     const store = createSchedulerStore({
@@ -61,12 +61,8 @@ describe("scheduler store", () => {
       prompt: "  Summarize my day  ",
       schedule: { kind: "daily", timeOfDay: "09:00" },
       workspaceBinding: { workspaceRoot: "E:/project", displayName: "project", boundAt: 1 },
-<<<<<<< HEAD
       mode,
       enabled: false,
-=======
-      mode: "research",
->>>>>>> 8edd4122 (feat(会话): 重定义四模式槽位为 chat/research/legal/work)
       toolMode: "allow-list",
       allowedToolIds: ["weather", "weather", "calendar"],
     });
@@ -75,11 +71,7 @@ describe("scheduler store", () => {
     expect(task.prompt).toBe("Summarize my day");
     expect(task.allowedToolIds).toEqual(["weather", "calendar"]);
     expect(task.workspaceBinding).toEqual({ workspaceRoot: "E:/project", displayName: "project", boundAt: 1 });
-<<<<<<< HEAD
     expect(task.mode).toBe(mode);
-=======
-    expect(task.mode).toBe("research");
->>>>>>> 8edd4122 (feat(会话): 重定义四模式槽位为 chat/research/legal/work)
     expect(task.nextFireAt).toBeTruthy();
 
     const store2 = createSchedulerStore({
@@ -186,7 +178,7 @@ describe("scheduler store", () => {
     expect(history[0].status).toBe("success");
   });
 
-  it.each([undefined, null, "invalid", "chat", "learn"])("loads legacy user mode %s as work with missing optional arrays", (mode) => {
+  it.each([undefined, null, "invalid", "learn"])("loads legacy user mode %s as work with missing optional arrays", (mode) => {
     const dir = tmpDir();
     onTestFinished(() => fs.rmSync(dir, { recursive: true, force: true }));
     const tasksFile = path.join(dir, "scheduled-tasks.json");
@@ -276,7 +268,7 @@ describe("scheduler store", () => {
       expect(task.approvalFingerprint).toBe("");
     });
 
-    it.each(["chat", "work", "learn", "code"] as const)("加载时保留插件任务的 %s 模式并归一化回停用", (mode) => {
+    it.each(["chat", "work", "research", "legal"] as const)("加载时保留插件任务的 %s 模式并归一化回停用", (mode) => {
       const dir = tmpDir();
       onTestFinished(() => fs.rmSync(dir, { recursive: true, force: true }));
       const tasksFile = path.join(dir, "scheduled-tasks.json");

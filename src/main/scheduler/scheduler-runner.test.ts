@@ -140,7 +140,7 @@ describe("scheduled Cyrene execution policy", () => {
 });
 
 describe("createSchedulerRunner lifecycle events", () => {
-  it.each(["code", "work"] as const)("runs a persisted %s user task in its saved mode and workspace after reload", async (mode) => {
+  it.each(["research", "work"] as const)("runs a persisted %s user task in its saved mode and workspace after reload", async (mode) => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), "cyrene-scheduler-mode-reload-"));
     try {
       const storeDeps = {

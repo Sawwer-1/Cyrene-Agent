@@ -522,8 +522,8 @@ export function registerAgUiIpc(
     },
     retire: retireCompletion,
     isBusy: sessionId => sessionActiveRuns.has(sessionId),
-    canWakeNow: async sessionId => (await chatsStore.getSession(sessionId))?.mode !== "learn"
-      || ![...sessionActiveRuns.values()].some(run => run.mode === "learn"),
+    canWakeNow: async sessionId => (await chatsStore.getSession(sessionId))?.mode !== "research"
+      || ![...sessionActiveRuns.values()].some(run => run.mode === "research"),
     canDeliver: canDeliverCompletion,
     wake: async (sessionId, eventId, completion) => {
       if (!await chatsStore.getSession(sessionId)) { inbox.discard(sessionId); return; }
@@ -654,7 +654,7 @@ export function registerAgUiIpc(
       const existing = sessionActiveRuns.get(sessionId);
       if (!existing) {
         // Learn 的工具和 Vault 使用全局注册，同步检查并占用运行槽位。
-        const activeLearn = mode === "learn" ? [...sessionActiveRuns.values()].find(run => run.mode === "learn") : undefined;
+        const activeLearn = mode === "research" ? [...sessionActiveRuns.values()].find(run => run.mode === "research") : undefined;
         if (activeLearn) {
           const error = `LEARN_RUN_ACTIVE:${activeLearn.runId}`;
           if (currentUser && input.assistantTurnId) {

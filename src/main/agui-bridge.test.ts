@@ -1165,7 +1165,7 @@ describe("agui-bridge session run guard", () => {
   }
 
   it("serializes Learn vault runs and releases the slot after cancellation", async () => {
-    mocks.getSession.mockImplementation((id: string) => ({ id, mode: "learn", messages: [], workspaceBinding: { workspaceRoot: mocks.userDataRoot, boundAt: 1 } }));
+    mocks.getSession.mockImplementation((id: string) => ({ id, mode: "research", messages: [], workspaceBinding: { workspaceRoot: mocks.userDataRoot, boundAt: 1 } }));
     mocks.skipDefaultRunFinished = true; mocks.neverComplete = true; mocks.completeOnAbort = true;
     const { bridge, runHandler } = await setupBridge();
     const sender = makeSender();
@@ -1670,7 +1670,7 @@ describe("agui-bridge background shell smoke (mock sessions, isolated SQLite)", 
   }
 
   it("defers a Learn completion until another vault run settles", async () => {
-    mocks.getSession.mockImplementation((id: string) => ({ id, mode: "learn", messages: [],
+    mocks.getSession.mockImplementation((id: string) => ({ id, mode: "research", messages: [],
       workspaceBinding: { workspaceRoot: path.join(mocks.userDataRoot, id), displayName: id, boundAt: 1 } }));
     const original = await start();
     await expect.poll(() => bridge.__getSessionActiveRunForTest("original")).toBeUndefined();
@@ -1690,7 +1690,7 @@ describe("agui-bridge background shell smoke (mock sessions, isolated SQLite)", 
   });
 
   it("rejects a foreground Learn run while another vault continuation is active", async () => {
-    mocks.getSession.mockImplementation((id: string) => ({ id, mode: "learn", messages: [],
+    mocks.getSession.mockImplementation((id: string) => ({ id, mode: "research", messages: [],
       workspaceBinding: { workspaceRoot: path.join(mocks.userDataRoot, id), displayName: id, boundAt: 1 } }));
     const original = await start();
     await expect.poll(() => bridge.__getSessionActiveRunForTest("original")).toBeUndefined();
