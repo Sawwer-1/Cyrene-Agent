@@ -245,12 +245,18 @@ export async function registerChatsIpc(
     ) => {
       // Invariant B：新会话创建即快照默认档案的默认模型（对话自持起点）
       const defaultProfile = getDefaultModelProfile();
+      // v2 槽位：legal 模式优先路由到本地法律模型档案（Ollama @ 11434）。
+      // 档案由用户在设置里配置 baseUrl 指向本机 Ollama；未配置时回落默认档案。
+      const profile = payload?.mode === "legal"
+        ? listSavedModelProfiles().find((p) =>
+          /(?:127\.0\.0\.1|localhost):11434/.test(p.baseUrl)) ?? defaultProfile
+        : defaultProfile;
       const session = (await chatsStore.createSession({
         title: payload?.title,
         identityId: payload?.identityId ?? null,
         mode: payload?.mode,
-        modelProfileId: defaultProfile?.id,
-        model: defaultProfile?.model || undefined,
+        modelProfileId: profile?.id,
+        model: profile?.model || undefined,
       }));
       broadcastChanged(event.sender);
       return session;

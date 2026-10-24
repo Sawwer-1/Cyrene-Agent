@@ -983,6 +983,36 @@ describe("chats IPC mode filtering", () => {
     expect(switched).toMatchObject({ modelProfileId: "p-b", model: "glm-b1" });
   });
 
+  it("#16b legal 模式创建会话优先路由到本地 Ollama 档案（v2 槽位）", async () => {
+    const LOCAL_PROFILE = {
+      id: "p-local", provider: "Ollama（本地）", baseUrl: "http://127.0.0.1:11434/v1", apiKey: "ollama",
+      model: "lawllm",
+    };
+    writeModelSettings([PROFILE_A, PROFILE_B, LOCAL_PROFILE], "p-a");
+    const { registerChatsIpc } = await import("./chats-ipc");
+    (await registerChatsIpc());
+    const create = mocks.handlers.get(IPC.CHATS_CREATE);
+    const event = { sender: {} };
+
+    // legal → 本地档案；chat/work/research → 默认档案
+    const legal = await create(event, { mode: "legal" }) as { modelProfileId?: string; model?: string };
+    expect(legal).toMatchObject({ modelProfileId: "p-local", model: "lawllm" });
+    const research = await create(event, { mode: "research" }) as { modelProfileId?: string };
+    expect(research).toMatchObject({ modelProfileId: "p-a" });
+    const work = await create(event, { mode: "work" }) as { modelProfileId?: string };
+    expect(work).toMatchObject({ modelProfileId: "p-a" });
+  });
+
+  it("#16c 未配置本地 Ollama 档案时 legal 会话回落默认档案", async () => {
+    writeModelSettings([PROFILE_A, PROFILE_B], "p-a");
+    const { registerChatsIpc } = await import("./chats-ipc");
+    (await registerChatsIpc());
+    const create = mocks.handlers.get(IPC.CHATS_CREATE);
+    const event = { sender: {} };
+    const legal = await create(event, { mode: "legal" }) as { modelProfileId?: string };
+    expect(legal).toMatchObject({ modelProfileId: "p-a" });
+  });
+
   it("#17 A 与 B 清单含同名模型：切 B 仍取 B 默认，同名不继承", async () => {
     writeModelSettings([PROFILE_A, PROFILE_B], "p-a");
     const { registerChatsIpc } = await import("./chats-ipc");
